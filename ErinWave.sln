@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E9AB4A72-3A2A-407C-B940-D2B1DB314638}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErinWave.Tests.MauiTest", "Tests\ErinWave.Tests.MauiTest\ErinWave.Tests.MauiTest.csproj", "{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErinWave.Tarinance", "ErinWave.Tarinance\ErinWave.Tarinance.csproj", "{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE2C5C7-0E4F-413E-8CF0-EF9F60F6FADB}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FCFC6D8A-F256-4FF8-B01D-19FF3BE310C5} = {E9AB4A72-3A2A-407C-B940-D2B1DB314638}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41CDBEBF-A59C-4EFF-80DD-39D8B9F5E412}
+	EndGlobalSection
+EndGlobal
