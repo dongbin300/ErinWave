@@ -1,4 +1,4 @@
-using System.Globalization;
+using ErinWave.Tarinance.Contents;
 
 namespace ErinWave.Tarinance.Views;
 
@@ -13,17 +13,13 @@ public partial class MarketListPage : ContentPage
     {
         var nowPrice = TarinanceClient.GetNowPrice();
 
+        MainLayout.Clear();
         foreach (var coin in nowPrice)
         {
-            var price = decimal.Parse(coin.Price, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
-            var prevPrice = decimal.Parse(coin.Prev_price, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
-            var change = Math.Round((price / prevPrice - 1) * 100, 2);
-            var changeString = change >= 0 ? $"+{change}%" : $"{change}%";
+            var content = new MarketListContent();
+            content.Init(coin);
 
-            Label label = new Label();
-            label.Text = $"{coin.Name} {coin.Symbol} {price:#,###} {changeString}";
-
-            MainLayout.Children.Add(label);
+            MainLayout.Children.Add(content);
         }
     }
 }
