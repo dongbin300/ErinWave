@@ -1,0 +1,45 @@
+﻿<table>
+    <tr>
+        <td class="nav-item" style="@style1">
+            <NavLink class="nav-link" href="" @onclick="MenuClick1">
+                Home
+            </NavLink>
+        </td>
+        <td class="nav-item" style="@style2">
+            <NavLink class="nav-link" href="guessgame" @onclick="MenuClick2">
+                숫자 맞추기 게임
+            </NavLink>
+        </td>
+        <td class="nav-item" style="@style3">
+            <NavLink class="nav-link" href="guessgame" @onclick="MenuClick3">
+                테스트
+            </NavLink>
+        </td>
+    </tr>
+</table>
+
+@code {
+    string style1 = "";
+    string style2 = "";
+    string style3 = "";
+
+    void Default()
+    {
+        style1 = style2 = style3 = "background-color: transparent;";
+    }
+    void MenuClick1()
+    {
+        Default();
+        style1 = "background-color: #3BCF86;";
+    }
+    void MenuClick2()
+    {
+        Default();
+        style2 = "background-color: #3BCF86;";
+    }
+    void MenuClick3()
+    {
+        Default();
+        style3 = "background-color: #3BCF86;";
+    }
+}

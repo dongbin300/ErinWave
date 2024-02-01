@@ -1,0 +1,67 @@
+﻿<table style="position: fixed; width: 100%;">
+    <tr>
+        <td class="nav-item" style="@style1">
+            <NavLink class="nav-link" href="" @onclick="MenuClick1">
+                거래소
+            </NavLink>
+        </td>
+        <td class="nav-item" style="@style2">
+            <NavLink class="nav-link" href="order" @onclick="MenuClick2">
+                주문
+            </NavLink>
+        </td>
+        <td class="nav-item" style="@style3">
+            <NavLink class="nav-link" href="mine" @onclick="MenuClick3">
+                채굴
+            </NavLink>
+        </td>
+        <td class="nav-item" style="@style4">
+            <NavLink class="nav-link" href="ranking" @onclick="MenuClick4">
+                랭킹
+            </NavLink>
+        </td>
+        <td class="nav-item" style="@style5">
+            <NavLink class="nav-link" href="me" @onclick="MenuClick5">
+                MY
+            </NavLink>
+        </td>
+    </tr>
+</table>
+
+@code {
+    string style1 = "background-color: #3BCF86;";
+    string style2 = "";
+    string style3 = "";
+    string style4 = "";
+    string style5 = "";
+
+    void Default()
+    {
+        style1 = style2 = style3 = style4 = style5 = "background-color: transparent;";
+    }
+    void MenuClick1()
+    {
+        Default();
+        style1 = "background-color: #3BCF86;";
+    }
+    void MenuClick2()
+    {
+        Default();
+        style2 = "background-color: #3BCF86;";
+    }
+    void MenuClick3()
+    {
+        Default();
+        style3 = "background-color: #3BCF86;";
+    }
+    void MenuClick4()
+    {
+        Default();
+        style4 = "background-color: #3BCF86;";
+    }
+    void MenuClick5()
+    {
+        Default();
+        style5 = "background-color: #3BCF86;";
+    }
+}

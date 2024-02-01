@@ -1,0 +1,40 @@
+﻿@page "/register"
+
+<PageTitle>타리낸스 회원가입</PageTitle>
+
+<div>
+	<p>타리낸스 회원가입</p>
+	<img src="resource/tarinance.png" width="100" /><br />
+	타리낸스(Tarinance)는 가상의 가상자산 거래 플랫폼입니다.<br />
+	<span class="event">가입 즉시 5만원과 타리코인 3개를 지급 해드립니다.</span>
+	<div style="margin:70px;">
+		<input type="text" class="textbox" id="userid" @bind="@UserId" @oninput="OnInputEvent" maxlength="16" placeholder="아이디" /><br />
+		아이디는 로그인 할 때 사용되며, 타인에게 알려주면 안 됩니다.
+		<br /><br />
+		<input type="text" class="textbox" id="nickname" maxlength="16" placeholder="닉네임" /><br />
+		닉네임은 유저 구분을 위해 사용되며, 타인에게 표시되는 정보입니다.
+		<br /><br />
+	</div>
+	<div>
+		<button class="normal-button" style="width:250px; height:50px;" onclick="Register()">회원가입</button>
+	</div>
+	<div>
+		<br /><span id="login"><u>이미 사용중인 아이디가 있습니다.</u></span>
+	</div>
+</div>
+
+@UserId
+
+@code {
+	string UserId;
+
+	void OnInputEvent(ChangeEventArgs e)
+	{
+		UserId = (string)e.Value;
+	}
+
+	// void Register()
+	// {
+
+	// }
+}
