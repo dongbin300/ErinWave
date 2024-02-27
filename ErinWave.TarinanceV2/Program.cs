@@ -13,7 +13,11 @@ namespace ErinWave.TarinanceV2
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            await builder.Build().RunAsync();
+            builder.Configuration.AddJsonFile("Properties/appSettings.json");
+            var host = builder.Build();
+            var settings = host.Services.GetRequiredService<IConfiguration>();
+
+            await host.RunAsync();
         }
     }
 }
