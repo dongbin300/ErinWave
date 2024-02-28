@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using System.Windows.Input;
 using System.IO;
 using System.Diagnostics;
+using System.Windows.Media.Imaging;
 
 namespace ErinWave.M5
 {
@@ -47,6 +48,16 @@ namespace ErinWave.M5
 				var item = LogQueue.Dequeue();
 				LogListBox.Items.Add(item);
 				LogListBox.ScrollIntoView(item);
+			}
+
+			// 직업 이미지
+			if (Common.MeJobImageSource != string.Empty)
+			{
+				MeJobImage.Source = new BitmapImage(new Uri(Common.MeJobImageSource));
+			}
+			if (Common.YouJobImageSource != string.Empty)
+			{
+				YouJobImage.Source = new BitmapImage(new Uri(Common.YouJobImageSource));
 			}
 		}
 

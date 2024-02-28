@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace ErinWave.M5Server
 	public class M5Handler : Worker
 	{
 		private static Encoding BaseTextEncoding => Encoding.UTF8;
-		private const int ResultBufferLength = 1024; // 단일 패킷 최대 1KB까지 허용
+		private const int ResultBufferLength = 4 * 1024; // 단일 패킷 최대 4KB까지 허용
 		private const int IntervalWork = 25;
 		private const string PacketDelimiter = "\r\n";
 
@@ -146,8 +147,80 @@ namespace ErinWave.M5Server
 												else
 												{
 													Player.Job = segment[1];
-													SendAll("3101", Id, segment[1]);
 													SendSystemMessage("직업 선택 완료");
+
+													if (M5Manager.Players.Count == 2 && M5Manager.Players.Count(x => x.Job != string.Empty) == 2)
+													{
+														// Red, Yellow, Green, Blue, Purple 순
+														bool[] decks = [true, true, true, true, true];
+
+														foreach (var player in M5Manager.Players)
+														{
+															switch (player.Job)
+															{
+																case "바바리안":
+																case "검투사":
+																	decks[0] = false;
+																	player.GetRedDeck();
+																	break;
+
+																case "성기사":
+																case "발키리":
+																	decks[1] = false;
+																	player.GetYellowDeck();
+																	break;
+
+																case "궁수":
+																case "사냥꾼":
+																	decks[2] = false;
+																	player.GetGreenDeck();
+																	break;
+
+																case "마법사":
+																case "주술사":
+																	decks[3] = false;
+																	player.GetBlueDeck();
+																	break;
+
+																case "닌자":
+																case "도적":
+																	decks[4] = false;
+																	player.GetPurpleDeck();
+																	break;
+															}
+														}
+
+														foreach (var player in M5Manager.Players)
+														{
+															var num = Random.Next(5);
+															while (!decks[num])
+															{
+																num = Random.Next(5);
+															}
+															decks[num] = false;
+															switch (num)
+															{
+																case 0:
+																	player.GetRedDeck();
+																	break;
+																case 1:
+																	player.GetYellowDeck();
+																	break;
+																case 2:
+																	player.GetGreenDeck();
+																	break;
+																case 3:
+																	player.GetBlueDeck();
+																	break;
+																case 4:
+																	player.GetPurpleDeck();
+																	break;
+															}
+														}
+														SendSystemMessage("플레이어에게 덱을 지급했습니다.");
+													}
+
+													SendGameStatus();
 												}
 												break;
 
@@ -186,18 +259,40 @@ namespace ErinWave.M5Server
 			if (stream.CanWrite)
 			{
 				stream.Write(buffer, 0, buffer.Length);
-				Console.WriteLine(packet);
+				Console.WriteLine(Id + " << "+ packet);
 			}
 		}
 
+		/// <summary>
+		/// 모두에게 패킷 전송
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="source"></param>
+		/// <param name="data"></param>
 		private void SendAll(string type, string source, string data)
 		{
 			Common.SendAll(new M5Packet(type, source, data));
 		}
 
+		/// <summary>
+		/// 시스템 메시지 전송
+		/// </summary>
+		/// <param name="message"></param>
 		private void SendSystemMessage(string message)
 		{
 			SendAll("00", "", message);
+		}
+
+		/// <summary>
+		/// 현재 게임 상태 전송
+		/// </summary>
+		private void SendGameStatus()
+		{
+			foreach (var player in M5Manager.Players)
+			{
+				var playerJson = JsonConvert.SerializeObject(player);
+				SendAll("0", player.Id, playerJson);
+			}
 		}
 	}
 }

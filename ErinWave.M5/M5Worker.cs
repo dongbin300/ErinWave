@@ -11,7 +11,7 @@ namespace ErinWave.M5
 	public class M5Worker : Worker
 	{
 		private static Encoding BaseTextEncoding => Encoding.UTF8;
-		private const int ResultBufferLength = 1024; // 단일 패킷 최대 1KB까지 허용
+		private const int ResultBufferLength = 4 * 1024; // 단일 패킷 최대 4KB까지 허용
 		private const int IntervalWork = 25;
 		private const string PacketDelimiter = "\r\n";
 
@@ -101,6 +101,54 @@ namespace ErinWave.M5
 
 						case "2001": // 채팅 메시지
 							LogQueue.Enqueue($"{packet.Source}: {packet.Data}");
+							break;
+
+						case "0": // 현재 게임 상황
+							if (packet.Source.Equals(Id)) // 자신
+							{
+								var data = JsonConvert.DeserializeObject<M5Player>(packet.Data) ?? default!;
+
+								if (data.Job != string.Empty)
+								{
+									Common.MeJobImageSource = Common.ImageResourceUrl + "job-" + data.Job switch
+									{
+										"바바리안" => "baba",
+										"검투사" => "glad",
+										"성기사" => "pal",
+										"발키리" => "val",
+										"궁수" => "arc",
+										"사냥꾼" => "hunter",
+										"마법사" => "magi",
+										"주술사" => "pow",
+										"닌자" => "ninja",
+										"도적" => "thief",
+										_ => "baba"
+									} + ".png";
+								}
+							}
+							else // 상대
+							{
+								var data = JsonConvert.DeserializeObject<M5Player>(packet.Data) ?? default!;
+
+								if (data.Job != string.Empty)
+								{
+									Common.YouJobImageSource = Common.ImageResourceUrl + "job-" + data.Job switch
+									{
+										"바바리안" => "baba",
+										"검투사" => "glad",
+										"성기사" => "pal",
+										"발키리" => "val",
+										"궁수" => "arc",
+										"사냥꾼" => "hunter",
+										"마법사" => "magi",
+										"주술사" => "pow",
+										"닌자" => "ninja",
+										"도적" => "thief",
+										_ => "baba"
+									} + ".png";
+								}
+							}
+									
 							break;
 
 						default:

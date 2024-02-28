@@ -19,6 +19,21 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
+            <Image x:Name="YouJobImage" Grid.Row="0" Stretch="Fill" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Image x:Name="YouDeckImage" Grid.Column="1" Grid.Row="1" Stretch="Fill" HorizontalAlignment="Left" Width="210" Height="294" />
+                <Image x:Name="YouUsedImage" Grid.Column="1" Grid.Row="1" Stretch="Fill" HorizontalAlignment="Right" Width="210" Height="294" />
+            </Grid>
+            
             <Image x:Name="MeJobImage" Grid.Row="2" Stretch="Fill" />
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
