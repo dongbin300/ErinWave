@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -88,29 +89,29 @@ namespace ErinWave.M5
 					switch (packet.Type)
 					{
 						case "00": // 시스템 메시지
-							LogQueue.Enqueue($"[SYSTEM]: {packet.Data}");
+							LogQueue.Enqueue($"[{DateTime.Now:HH:mm:ss}][SYSTEM] {packet.Data}");
 							break;
 
 						case "1001": // 유저 입장
-							LogQueue.Enqueue($"{packet.Data} 님이 입장하셨습니다.");
+							LogQueue.Enqueue($"[{DateTime.Now:HH:mm:ss}]{packet.Data} 님이 입장하셨습니다.");
 							break;
 
 						case "1002": // 유저 퇴장
-							LogQueue.Enqueue($"{packet.Data} 님이 퇴장하셨습니다.");
+							LogQueue.Enqueue($"[{DateTime.Now:HH:mm:ss}]{packet.Data} 님이 퇴장하셨습니다.");
 							break;
 
 						case "2001": // 채팅 메시지
-							LogQueue.Enqueue($"{packet.Source}: {packet.Data}");
+							LogQueue.Enqueue($"[{DateTime.Now:HH:mm:ss}]{packet.Source}: {packet.Data}");
 							break;
 
-						case "0": // 현재 게임 상황
+						case "0": // 현재 플레이어 상황
 							if (packet.Source.Equals(Id)) // 자신
 							{
 								var data = JsonConvert.DeserializeObject<M5Player>(packet.Data) ?? default!;
 
 								if (data.Job != string.Empty)
 								{
-									Common.MeJobImageSource = Common.ImageResourceUrl + "job-" + data.Job switch
+									Common.MeJobImageSource = "job-" + data.Job switch
 									{
 										"바바리안" => "baba",
 										"검투사" => "glad",
@@ -123,7 +124,34 @@ namespace ErinWave.M5
 										"닌자" => "ninja",
 										"도적" => "thief",
 										_ => "baba"
-									} + ".png";
+									};
+
+									Common.MeDeckImageSource = data.Deck.Count > 0 ? "deck-" + data.Job switch
+									{
+										"바바리안" => "red",
+										"검투사" => "red",
+										"성기사" => "yellow",
+										"발키리" => "yellow",
+										"궁수" => "green",
+										"사냥꾼" => "green",
+										"마법사" => "blue",
+										"주술사" => "blue",
+										"닌자" => "purple",
+										"도적" => "purple",
+										_ => "red"
+									} : null;
+
+									Common.MeUsedImageSource = data.Used.Count > 0 ? Common.ToFileName(data.Used[0]) : null;
+
+									Common.MeHandImageSource = [];
+									foreach (var card in data.Hand)
+									{
+										var fileName = Common.ToFileName(card);
+										Common.MeHandImageSource.Add(fileName);
+									}
+
+									Common.MeDeckCount = data.Deck.Count;
+									Common.MeUsedCount = data.Used.Count;
 								}
 							}
 							else // 상대
@@ -132,7 +160,7 @@ namespace ErinWave.M5
 
 								if (data.Job != string.Empty)
 								{
-									Common.YouJobImageSource = Common.ImageResourceUrl + "job-" + data.Job switch
+									Common.YouJobImageSource = "job-" + data.Job switch
 									{
 										"바바리안" => "baba",
 										"검투사" => "glad",
@@ -145,10 +173,64 @@ namespace ErinWave.M5
 										"닌자" => "ninja",
 										"도적" => "thief",
 										_ => "baba"
-									} + ".png";
+									};
+
+									Common.YouDeckImageSource = data.Deck.Count > 0 ? "deck-" + data.Job switch
+									{
+										"바바리안" => "red",
+										"검투사" => "red",
+										"성기사" => "yellow",
+										"발키리" => "yellow",
+										"궁수" => "green",
+										"사냥꾼" => "green",
+										"마법사" => "blue",
+										"주술사" => "blue",
+										"닌자" => "purple",
+										"도적" => "purple",
+										_ => "red"
+									} : null;
+
+									Common.YouUsedImageSource = data.Used.Count > 0 ? Common.ToFileName(data.Used[0]) : null;
+
+									Common.YouHandImageSource = [];
+									foreach (var card in data.Hand)
+									{
+										var fileName = Common.ToFileName(card);
+										Common.YouHandImageSource.Add(fileName);
+									}
+
+									Common.YouDeckCount = data.Deck.Count;
+									Common.YouUsedCount = data.Used.Count;
 								}
 							}
-									
+
+							break;
+
+						case "1": // 현재 필드 상황
+							var fieldData = JsonConvert.DeserializeObject<M5Field>(packet.Data) ?? default!;
+
+							// 보스
+							Common.FieldBossImageSource = fieldData.Boss != string.Empty ? "boss" + fieldData.Boss : null;
+
+							// 던전 덱 뒷면
+							Common.FieldDungeonImageSource = fieldData.Dungeons.Count > 0 ? "card-monster" : null;
+
+							// 현재 던전
+							Common.FieldCurrentDungeonImageSource = Common.ToFileName(fieldData.CurrentDungeon);
+
+							// 현재 올려져있는 카드
+							Common.FieldCurrentCardImageSource = [];
+							foreach (var card in fieldData.CurrentCards)
+							{
+								var fileName = Common.ToFileName(card);
+								Common.FieldCurrentCardImageSource.Add(fileName);
+							}
+							break;
+
+						case "9": // 현재 남은 시간
+							var seconds = int.Parse(packet.Data);
+							Common.RemainSeconds = seconds;
+							Common.RemainTimeString = $"{seconds / 60:00}:{seconds % 60:00}";
 							break;
 
 						default:
@@ -175,6 +257,36 @@ namespace ErinWave.M5
 		public void SendChatMessagePacket(string message)
 		{
 			SendPacket("2001", Id, message);
+		}
+
+		public void SendDeckDrawEventPacket()
+		{
+			SendPacket("3001", Id, "");
+		}
+
+		public void SendUseCardEventPacket(int index)
+		{
+			SendPacket("3002", Id, index.ToString());
+		}
+
+		public void SendConfirmCurrentDungeonPacket()
+		{
+			SendPacket("3003", Id, "");
+		}
+
+		public void SendNextDungeonOpenPacket()
+		{
+			SendPacket("3004", Id, "");
+		}
+
+		public void SendConfirmBossPacket()
+		{
+			SendPacket("3005", Id, "");
+		}
+
+		public void SendUseAbilityPacket()
+		{
+			SendPacket("3010", Id, "");
 		}
 
 		private void SendPacket(string type, string source, string data)

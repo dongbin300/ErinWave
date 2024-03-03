@@ -19,6 +19,7 @@ namespace ErinWave.M5Server
 			};
 
 			Common.SendAll = SendAll;
+			new M5Manager().Start();
 
 			try
 			{

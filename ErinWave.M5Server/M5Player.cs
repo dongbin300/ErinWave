@@ -1,7 +1,12 @@
-﻿namespace ErinWave.M5Server
+﻿using Newtonsoft.Json;
+
+namespace ErinWave.M5Server
 {
 	public class M5Player(string id)
 	{
+		[JsonIgnore]
+		private Random random = new();
+
 		/// <summary>
 		/// 닉네임
 		/// </summary>
@@ -114,7 +119,15 @@
 		/// 
 		/// dg
 		/// 2101 human-1
-		/// 2102
+		/// 2102 human-2
+		/// ...
+		/// 2113 human-13
+		/// 2114 monster-1
+		/// ...
+		/// 2125 monster-12
+		/// 2126 obs-1
+		/// ...
+		/// 2140 obs-15
 		/// 
 		/// crisis
 		/// 2201 event-1
@@ -132,18 +145,108 @@
 		public List<string> Deck { get; set; } = [];
 
 		/// <summary>
+		/// 손에 들고 있는 카드
+		/// </summary>
+		public List<string> Hand { get; set; } = [];
+
+		/// <summary>
 		/// 버린 더미
 		/// </summary>
 		public List<string> Used { get; set; } = [];
 
-		public void ShuffleDeck()
+		/// <summary>
+		/// 덱에서 카드 한 장을 드로우합니다.
+		/// </summary>
+		public void Draw()
 		{
+			if (Deck.Count == 0)
+			{
+				return;
+			}
 
+			Hand.Add(Deck[0]);
+			Deck.RemoveAt(0);
 		}
 
+		/// <summary>
+		/// 버린 더미에서 카드 한 장을 드로우합니다.
+		/// </summary>
+		public void DrawFromUsed()
+		{
+			if (Used.Count == 0)
+			{
+				return;
+			}
+
+			Hand.Add(Used[0]);
+			Used.RemoveAt(0);
+		}
+
+		/// <summary>
+		/// 버린 더미에서 카드 한 장을 랜덤으로 드로우합니다.
+		/// </summary>
+		public void DrawFromUsedRandom()
+		{
+			if (Used.Count == 0)
+			{
+				return;
+			}
+
+			var num = random.Next(Used.Count);
+			Hand.Add(Used[num]);
+			Used.RemoveAt(num);
+		}
+
+
+		/// <summary>
+		/// 손에 든 카드 중에서 한 장을 랜덤으로 버린 더미로 버립니다.
+		/// </summary>
+		public void DiscardRandom()
+		{
+			if (Hand.Count == 0)
+			{
+				return;
+			}
+
+			var num = random.Next(Hand.Count);
+			Used.Insert(0, Hand[num]);
+			Hand.RemoveAt(num);
+		}
+
+		/// <summary>
+		/// 손에 든 카드 전부를 버린 더미로 버립니다.
+		/// </summary>
+		public void DiscardAll()
+		{
+			if (Hand.Count == 0)
+			{
+				return;
+			}
+
+			Used.InsertRange(0, Hand);
+			Hand = [];
+		}
+
+		/// <summary>
+		/// Fisher-Yates Shuffle
+		/// </summary>
+		public void ShuffleDeck()
+		{
+			var n = Deck.Count;
+			while (n > 1)
+			{
+				n--;
+				var k = random.Next(n + 1);
+				(Deck[n], Deck[k]) = (Deck[k], Deck[n]);
+			}
+		}
+
+		/// <summary>
+		/// 덱을 초기화합니다.
+		/// </summary>
 		public void ClearDeck()
 		{
-			Deck = [];
+			Deck.Clear();
 		}
 
 		public void GetRedDeck() => Deck.AddRange([.. "1101,1101,1101,1101,1101,1102,1102,1103,1103,1104,1104,1105,1105,1106,1106,1107,1107,1107,1107,1107,1107,1107,1109,1109,1109,1109,1109,1111,1111,1111,1113,1113,1113,1113,1113,1113,1201,1201,1202,1202".Split(',')]);

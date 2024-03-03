@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-using System.ComponentModel;
-using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Text;
 
@@ -148,78 +145,7 @@ namespace ErinWave.M5Server
 												{
 													Player.Job = segment[1];
 													SendSystemMessage("직업 선택 완료");
-
-													if (M5Manager.Players.Count == 2 && M5Manager.Players.Count(x => x.Job != string.Empty) == 2)
-													{
-														// Red, Yellow, Green, Blue, Purple 순
-														bool[] decks = [true, true, true, true, true];
-
-														foreach (var player in M5Manager.Players)
-														{
-															switch (player.Job)
-															{
-																case "바바리안":
-																case "검투사":
-																	decks[0] = false;
-																	player.GetRedDeck();
-																	break;
-
-																case "성기사":
-																case "발키리":
-																	decks[1] = false;
-																	player.GetYellowDeck();
-																	break;
-
-																case "궁수":
-																case "사냥꾼":
-																	decks[2] = false;
-																	player.GetGreenDeck();
-																	break;
-
-																case "마법사":
-																case "주술사":
-																	decks[3] = false;
-																	player.GetBlueDeck();
-																	break;
-
-																case "닌자":
-																case "도적":
-																	decks[4] = false;
-																	player.GetPurpleDeck();
-																	break;
-															}
-														}
-
-														foreach (var player in M5Manager.Players)
-														{
-															var num = Random.Next(5);
-															while (!decks[num])
-															{
-																num = Random.Next(5);
-															}
-															decks[num] = false;
-															switch (num)
-															{
-																case 0:
-																	player.GetRedDeck();
-																	break;
-																case 1:
-																	player.GetYellowDeck();
-																	break;
-																case 2:
-																	player.GetGreenDeck();
-																	break;
-																case 3:
-																	player.GetBlueDeck();
-																	break;
-																case 4:
-																	player.GetPurpleDeck();
-																	break;
-															}
-														}
-														SendSystemMessage("플레이어에게 덱을 지급했습니다.");
-													}
-
+													SendSystemMessage("!시작 명령어로 게임을 시작해주세요.");
 													SendGameStatus();
 												}
 												break;
@@ -231,9 +157,115 @@ namespace ErinWave.M5Server
 									}
 									break;
 
+								case "!시작":
+									if (segment.Length == 1)
+									{
+										SendSystemMessage("!시작 3 => 3스테이지 게임을 시작합니다. (1,2,3,4,5 스테이지만 구현되어 있습니다.)");
+									}
+									else
+									{
+										var stage = int.Parse(segment[1]);
+										M5Manager.Field.SetGame(stage);
+										M5Manager.Stage = stage;
+
+										DistributeDeck();
+
+										SendSystemMessage($"{stage} 스테이지가 시작되었습니다.");
+										SendGameStatus();
+									}
+									break;
+
 								default:
 									break;
 							}
+							break;
+
+						case "3001": // 자신의 덱에서 카드 드로우
+							var p_2 = M5Manager.GetPlayer(packet.Source);
+							if (p_2.Hand.Count < 5) // 손 카드 상한선 5
+							{
+								p_2.Draw();
+							}
+							SendGameStatus();
+							break;
+
+						case "3002": // 카드 사용
+							M5Manager.UseCard(packet.Source, int.Parse(packet.Data));
+							SendGameStatus();
+							break;
+
+						case "3003": // 던전 처치/위기 적용(던전카드 클릭)
+							switch (M5Manager.Field.CurrentDungeon)
+							{
+								case "2201":
+								case "2202":
+								case "2203":
+								case "2204": // 위기 적용
+									M5Manager.ActivateCrisisEvent();
+									M5Manager.Field.WinDungeon();
+									break;
+
+								default: // 던전 처치
+									if (M5Manager.Field.IsWinDungeon())
+									{
+										M5Manager.Field.WinDungeon();
+									}
+									else
+									{
+										SendSystemMessage("카드가 부족합니다.");
+									}
+									break;
+							}
+							SendGameStatus();
+							break;
+
+						case "3004": // 던전 카드 오픈
+							M5Manager.Field.OpenDungeon();
+							SendGameStatus();
+							break;
+
+						case "3005": // 보스 처치
+							switch(M5Manager.Field.CurrentDungeon)
+							{
+								case "1":
+								case "2":
+								case "3":
+								case "4":
+								case "5":
+									if (M5Manager.Field.IsWinDungeon())
+									{
+										M5Manager.Field.WinBoss();
+										M5Manager.Field.IsPlaying = false;
+										var stage = M5Manager.Stage;
+										var clearTime = 300 - M5Manager.Field.RemainSeconds;
+										var remainCardCount = M5Manager.GetRemainCardCount();
+										SendSystemMessage($"{stage} 스테이지 클리어!!");
+										SendSystemMessage($"클리어 시간: {clearTime / 60}분 {clearTime % 60}초");
+										SendSystemMessage($"남은 카드 수: {remainCardCount}");
+									}
+									else
+									{
+										SendSystemMessage("카드가 부족합니다.");
+									}
+									SendGameStatus();
+									break;
+
+								default:
+									break;
+							}
+							break;
+
+						case "3010": // 직업 능력 사용
+							var id = packet.Source;
+							if (M5Manager.UseAbility(id))
+							{
+								SendSystemMessage($"{id}님이 능력을 사용하였습니다.");
+							}
+							else
+							{
+								SendSystemMessage($"{id}님이 능력사용에 실패하였습니다.");
+							}
+							SendGameStatus();
 							break;
 
 						default:
@@ -259,7 +291,7 @@ namespace ErinWave.M5Server
 			if (stream.CanWrite)
 			{
 				stream.Write(buffer, 0, buffer.Length);
-				Console.WriteLine(Id + " << "+ packet);
+				Console.WriteLine(Id + " << " + packet);
 			}
 		}
 
@@ -288,10 +320,95 @@ namespace ErinWave.M5Server
 		/// </summary>
 		private void SendGameStatus()
 		{
+			// 플레이어 상태
 			foreach (var player in M5Manager.Players)
 			{
 				var playerJson = JsonConvert.SerializeObject(player);
 				SendAll("0", player.Id, playerJson);
+			}
+
+			// 필드 상태
+			var fieldJson = JsonConvert.SerializeObject(M5Manager.Field);
+			SendAll("1", "field", fieldJson);
+		}
+
+		private void DistributeDeck()
+		{
+			if (M5Manager.Players.Count == 2 && M5Manager.Players.Count(x => x.Job != string.Empty) == 2)
+			{
+				// Red, Yellow, Green, Blue, Purple 순
+				bool[] decks = [true, true, true, true, true];
+
+				foreach (var player in M5Manager.Players)
+				{
+					player.Deck = [];
+					player.Hand = [];
+					player.Used = [];
+
+					switch (player.Job)
+					{
+						case "바바리안":
+						case "검투사":
+							decks[0] = false;
+							player.GetRedDeck();
+							break;
+
+						case "성기사":
+						case "발키리":
+							decks[1] = false;
+							player.GetYellowDeck();
+							break;
+
+						case "궁수":
+						case "사냥꾼":
+							decks[2] = false;
+							player.GetGreenDeck();
+							break;
+
+						case "마법사":
+						case "주술사":
+							decks[3] = false;
+							player.GetBlueDeck();
+							break;
+
+						case "닌자":
+						case "도적":
+							decks[4] = false;
+							player.GetPurpleDeck();
+							break;
+					}
+				}
+
+				foreach (var player in M5Manager.Players)
+				{
+					var num = Random.Next(5);
+					while (!decks[num])
+					{
+						num = Random.Next(5);
+					}
+					decks[num] = false;
+					switch (num)
+					{
+						case 0:
+							player.GetRedDeck();
+							break;
+						case 1:
+							player.GetYellowDeck();
+							break;
+						case 2:
+							player.GetGreenDeck();
+							break;
+						case 3:
+							player.GetBlueDeck();
+							break;
+						case 4:
+							player.GetPurpleDeck();
+							break;
+					}
+
+					player.ShuffleDeck();
+				}
+				SendSystemMessage("플레이어에게 덱을 지급했습니다.");
 			}
 		}
 	}
