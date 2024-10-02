@@ -140,9 +140,11 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(sellOrder.MakerId);
 													maker.Income(pair.QuoteAsset, amount);
+													maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 													var taker = player;
 													taker.Income(pair.BaseAsset, transactionQuantity);
 													taker.Income(pair.QuoteAsset, -amount);
+													taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 													pair.AddTransaction(time, sellOrder.Price, transactionQuantity, sellOrder.MakerId, taker.Id);
 													sellOrder.Filled += transactionQuantity;
@@ -156,9 +158,11 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(sellOrder.MakerId);
 													maker.Income(pair.QuoteAsset, amount);
+													maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 													var taker = player;
 													taker.Income(pair.BaseAsset, transactionQuantity);
 													taker.Income(pair.QuoteAsset, -amount);
+													taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 													pair.AddTransaction(time, sellOrder.Price, transactionQuantity, sellOrder.MakerId, taker.Id);
 													removeOpenOrders.Add(sellOrder);
@@ -214,9 +218,11 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(buyOrder.MakerId);
 													maker.Income(pair.BaseAsset, transactionQuantity);
+													maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 													var taker = player;
 													taker.Income(pair.BaseAsset, -transactionQuantity);
 													taker.Income(pair.QuoteAsset, amount);
+													taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 													pair.AddTransaction(time, buyOrder.Price, transactionQuantity, buyOrder.MakerId, taker.Id);
 													buyOrder.Filled += transactionQuantity;
@@ -230,9 +236,11 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(buyOrder.MakerId);
 													maker.Income(pair.BaseAsset, transactionQuantity);
+													maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 													var taker = player;
 													taker.Income(pair.BaseAsset, -transactionQuantity);
 													taker.Income(pair.QuoteAsset, amount);
+													taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 													pair.AddTransaction(time, buyOrder.Price, transactionQuantity, buyOrder.MakerId, taker.Id);
 													removeOpenOrders.Add(buyOrder);
@@ -284,9 +292,11 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(sellOrder.MakerId);
 												maker.Income(pair.QuoteAsset, amount);
+												maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 												var taker = player;
 												taker.Income(pair.BaseAsset, transactionQuantity);
 												taker.Income(pair.QuoteAsset, -amount);
+												taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 												pair.AddTransaction(time, sellOrder.Price, transactionQuantity, sellOrder.MakerId, taker.Id);
 												sellOrder.Filled += transactionQuantity;
@@ -299,9 +309,11 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(sellOrder.MakerId);
 												maker.Income(pair.QuoteAsset, amount);
+												maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 												var taker = player;
 												taker.Income(pair.BaseAsset, transactionQuantity);
 												taker.Income(pair.QuoteAsset, -amount);
+												taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 												pair.AddTransaction(time, sellOrder.Price, transactionQuantity, sellOrder.MakerId, taker.Id);
 												removeOpenOrders.Add(sellOrder);
@@ -335,9 +347,11 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(buyOrder.MakerId);
 												maker.Income(pair.BaseAsset, transactionQuantity);
+												maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 												var taker = player;
 												taker.Income(pair.BaseAsset, -transactionQuantity);
 												taker.Income(pair.QuoteAsset, amount);
+												taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 												pair.AddTransaction(time, buyOrder.Price, transactionQuantity, buyOrder.MakerId, taker.Id);
 												buyOrder.Filled += transactionQuantity;
@@ -350,9 +364,11 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(buyOrder.MakerId);
 												maker.Income(pair.BaseAsset, transactionQuantity);
+												maker.Income(pair.QuoteAsset, -amount * MakerFeeRate);
 												var taker = player;
 												taker.Income(pair.BaseAsset, -transactionQuantity);
 												taker.Income(pair.QuoteAsset, amount);
+												taker.Income(pair.QuoteAsset, -amount * TakerFeeRate);
 
 												pair.AddTransaction(time, buyOrder.Price, transactionQuantity, buyOrder.MakerId, taker.Id);
 												removeOpenOrders.Add(buyOrder);
