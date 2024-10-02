@@ -128,7 +128,7 @@ namespace ErinWave.Richer
 		{
 			var price = decimal.Parse(PriceTextBox.Text);
 			var quantity = decimal.Parse(QuantityTextBox.Text);
-			var result = RM.HumanOrder(RM.Human, "TRCKRW", OrderSide.Buy, OrderType.Limit, quantity, price);
+			var result = RM.PlaceOrder(RM.Human, "TRCKRW", OrderSide.Buy, OrderType.Limit, quantity, price);
 
 			if (!string.IsNullOrEmpty(result))
 			{
@@ -139,7 +139,7 @@ namespace ErinWave.Richer
 		private void MarketButton_Click(object sender, RoutedEventArgs e)
 		{
 			var quantity = decimal.Parse(QuantityTextBox.Text);
-			var result = RM.HumanOrder(RM.Human, "TRCKRW", OrderSide.Buy, OrderType.Market, quantity);
+			var result = RM.PlaceOrder(RM.Human, "TRCKRW", OrderSide.Buy, OrderType.Market, quantity);
 
 			if (!string.IsNullOrEmpty(result))
 			{
@@ -164,7 +164,7 @@ namespace ErinWave.Richer
 				return;
 			}
 
-			RM.HumanCancelOrder(RM.Human, "TRCKRW", order);
+			RM.CancelOrder(RM.Human, "TRCKRW", order);
 		}
 	}
 }

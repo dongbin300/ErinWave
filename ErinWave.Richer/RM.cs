@@ -1,11 +1,14 @@
 ﻿using ErinWave.Richer.AI;
 using ErinWave.Richer.Enums;
 using ErinWave.Richer.Json;
+using ErinWave.Richer.Maths;
 using ErinWave.Richer.Models;
 using ErinWave.Richer.Models.Exchanges;
 
 using Newtonsoft.Json;
 
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 
 namespace ErinWave.Richer
@@ -17,6 +20,7 @@ namespace ErinWave.Richer
 	/// </summary>
 	public static class RM
 	{
+		private static SmartRandom r = default!;
 		public static readonly string ExchangeFilePath = "data/ex.json";
 		public static readonly string HumanFilePath = "data/human.json";
 		public static readonly string AisFilePath = "data/ai.json";
@@ -36,6 +40,8 @@ namespace ErinWave.Richer
 			{
 				Directory.CreateDirectory("data");
 			}
+
+			r = new SmartRandom();
 		}
 
 		public static RicherPlayer GetPlayer(string id)
@@ -78,12 +84,12 @@ namespace ErinWave.Richer
 		}
 		#endregion
 
-		#region Human
-		public static string HumanOrder(RicherHuman human, string symbol, OrderSide orderSide, OrderType orderType, decimal quantity, decimal? price = null)
+		#region Order
+		public static string PlaceOrder(RicherPlayer player, string symbol, OrderSide orderSide, OrderType orderType, decimal quantity, decimal? price = null)
 		{
 			try
 			{
-				var pair = Exchange.Pairs.Find(x => x.Symbol.Equals(symbol));
+				var pair = Exchange.GetPair(symbol);
 				if (pair == null)
 				{
 					return "No Symbol";
@@ -103,7 +109,7 @@ namespace ErinWave.Richer
 							{
 								case OrderSide.Buy:
 									{
-										if (human.Wallet.KrwQuantity < price * quantity)
+										if (player.Wallet.KrwQuantity < price * quantity)
 										{
 											return "Require KRW";
 										}
@@ -111,9 +117,9 @@ namespace ErinWave.Richer
 										if (price < pair.OrderBook.TopSellPrice) // Maker
 										{
 											var amount = price.Value * quantity;
-											var maker = human;
+											var maker = player;
 											maker.Income(pair.QuoteAsset, -amount);
-											pair.AddOrder(time, human.Id, orderSide, price.Value, quantity);
+											pair.AddOrder(time, player.Id, orderSide, price.Value, quantity);
 										}
 										else // Taker
 										{
@@ -134,7 +140,7 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(sellOrder.MakerId);
 													maker.Income(pair.QuoteAsset, amount);
-													var taker = human;
+													var taker = player;
 													taker.Income(pair.BaseAsset, transactionQuantity);
 													taker.Income(pair.QuoteAsset, -amount);
 
@@ -150,7 +156,7 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(sellOrder.MakerId);
 													maker.Income(pair.QuoteAsset, amount);
-													var taker = human;
+													var taker = player;
 													taker.Income(pair.BaseAsset, transactionQuantity);
 													taker.Income(pair.QuoteAsset, -amount);
 
@@ -168,9 +174,9 @@ namespace ErinWave.Richer
 											if (remainQuantity > 0) // 수량이 남아있으면 나머지는 Maker
 											{
 												var amount = price.Value * remainQuantity;
-												var maker = human;
+												var maker = player;
 												maker.Income(pair.QuoteAsset, -amount);
-												pair.AddOrder(time, human.Id, orderSide, price.Value, remainQuantity);
+												pair.AddOrder(time, player.Id, orderSide, price.Value, remainQuantity);
 											}
 										}
 									}
@@ -178,16 +184,16 @@ namespace ErinWave.Richer
 
 								case OrderSide.Sell:
 									{
-										if (human.Wallet.GetAssetQuantity(pair.BaseAsset) < quantity)
+										if (player.Wallet.GetAssetQuantity(pair.BaseAsset) < quantity)
 										{
 											return $"Require {pair.BaseAsset}";
 										}
 
 										if (price > pair.OrderBook.TopBuyPrice) // Maker
 										{
-											var maker = human;
+											var maker = player;
 											maker.Income(pair.BaseAsset, -quantity);
-											pair.AddOrder(time, human.Id, orderSide, price.Value, quantity);
+											pair.AddOrder(time, player.Id, orderSide, price.Value, quantity);
 										}
 										else // Taker
 										{
@@ -208,7 +214,7 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(buyOrder.MakerId);
 													maker.Income(pair.BaseAsset, transactionQuantity);
-													var taker = human;
+													var taker = player;
 													taker.Income(pair.BaseAsset, -transactionQuantity);
 													taker.Income(pair.QuoteAsset, amount);
 
@@ -224,7 +230,7 @@ namespace ErinWave.Richer
 
 													var maker = GetPlayer(buyOrder.MakerId);
 													maker.Income(pair.BaseAsset, transactionQuantity);
-													var taker = human;
+													var taker = player;
 													taker.Income(pair.BaseAsset, -transactionQuantity);
 													taker.Income(pair.QuoteAsset, amount);
 
@@ -241,9 +247,9 @@ namespace ErinWave.Richer
 
 											if (remainQuantity > 0) // 수량이 남아있으면 나머지는 Maker
 											{
-												var maker = human;
+												var maker = player;
 												maker.Income(pair.BaseAsset, -remainQuantity);
-												pair.AddOrder(time, human.Id, orderSide, price.Value, remainQuantity);
+												pair.AddOrder(time, player.Id, orderSide, price.Value, remainQuantity);
 											}
 										}
 									}
@@ -261,7 +267,7 @@ namespace ErinWave.Richer
 							{
 								case OrderSide.Buy:
 									{
-										if (human.Wallet.KrwQuantity * pair.MarketMaxRate < pair.OrderBook.TopSellPrice * quantity)
+										if (player.Wallet.KrwQuantity * pair.MarketMaxRate < pair.OrderBook.TopSellPrice * quantity)
 										{
 											return "Require KRW";
 										}
@@ -278,7 +284,7 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(sellOrder.MakerId);
 												maker.Income(pair.QuoteAsset, amount);
-												var taker = human;
+												var taker = player;
 												taker.Income(pair.BaseAsset, transactionQuantity);
 												taker.Income(pair.QuoteAsset, -amount);
 
@@ -293,7 +299,7 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(sellOrder.MakerId);
 												maker.Income(pair.QuoteAsset, amount);
-												var taker = human;
+												var taker = player;
 												taker.Income(pair.BaseAsset, transactionQuantity);
 												taker.Income(pair.QuoteAsset, -amount);
 
@@ -312,7 +318,7 @@ namespace ErinWave.Richer
 
 								case OrderSide.Sell:
 									{
-										if (human.Wallet.GetAssetQuantity(pair.BaseAsset) < quantity)
+										if (player.Wallet.GetAssetQuantity(pair.BaseAsset) < quantity)
 										{
 											return $"Require {pair.BaseAsset}";
 										}
@@ -329,7 +335,7 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(buyOrder.MakerId);
 												maker.Income(pair.BaseAsset, transactionQuantity);
-												var taker = human;
+												var taker = player;
 												taker.Income(pair.BaseAsset, -transactionQuantity);
 												taker.Income(pair.QuoteAsset, amount);
 
@@ -344,7 +350,7 @@ namespace ErinWave.Richer
 
 												var maker = GetPlayer(buyOrder.MakerId);
 												maker.Income(pair.BaseAsset, transactionQuantity);
-												var taker = human;
+												var taker = player;
 												taker.Income(pair.BaseAsset, -transactionQuantity);
 												taker.Income(pair.QuoteAsset, amount);
 
@@ -379,11 +385,11 @@ namespace ErinWave.Richer
 			}
 		}
 
-		public static string HumanCancelOrder(RicherHuman human, string symbol, RicherOpenOrder order)
+		public static string CancelOrder(RicherPlayer player, string symbol, RicherOpenOrder order)
 		{
 			try
 			{
-				var pair = Exchange.Pairs.Find(x => x.Symbol.Equals(symbol));
+				var pair = Exchange.GetPair(symbol);
 				if (pair == null)
 				{
 					return "No Symbol";
@@ -395,7 +401,7 @@ namespace ErinWave.Richer
 					return "No Open Order";
 				}
 
-				var maker = human;
+				var maker = player;
 				switch (openOrder.OrderSide)
 				{
 					case OrderSide.Buy:
@@ -423,6 +429,32 @@ namespace ErinWave.Richer
 				return ex.Message;
 			}
 		}
+
+		public static string PlaceBestMakerOrder(RicherPlayer player, string symbol, OrderSide orderSide, decimal quantity)
+		{
+			var pair = Exchange.GetPair(symbol);
+			if (pair == null)
+			{
+				return "No Symbol";
+			}
+
+			var price = orderSide == OrderSide.Buy ? pair.OrderBook.TopBuyPrice : pair.OrderBook.TopSellPrice;
+
+			return PlaceOrder(player, symbol, orderSide, OrderType.Limit, quantity, price);
+		}
+
+		public static string PlaceChaseOrder(RicherPlayer player, string symbol, OrderSide orderSide, decimal quantity)
+		{
+			var pair = Exchange.GetPair(symbol);
+			if (pair == null)
+			{
+				return "No Symbol";
+			}
+
+			var price = orderSide == OrderSide.Buy ? pair.OrderBook.TopBuyPrice : pair.OrderBook.TopSellPrice;
+
+			return PlaceOrder(player, symbol, orderSide, OrderType.Limit, quantity, price);
+		}
 		#endregion
 
 		#region AI
@@ -430,7 +462,7 @@ namespace ErinWave.Richer
 		{
 			try
 			{
-				var pair = Exchange.Pairs.Find(x => x.Symbol.Equals(symbol));
+				var pair = Exchange.GetPair(symbol);
 				if (pair == null)
 				{
 					return "No Symbol";
@@ -446,6 +478,7 @@ namespace ErinWave.Richer
 				string newName = $"AI#{newNameNumber + 1}";
 
 				var ai = new RicherAi(newId, newName, type);
+				ai.MonitorPairs.Add(pair);
 
 				switch (type)
 				{
@@ -459,16 +492,16 @@ namespace ErinWave.Richer
 					// 고래: pair 시총의 5%의 자금을 가지고 시작, 고래는 10명 고정
 					case RicherAiType.Whale:
 						{
+							ai.WhaleMode = RicherWhaleMode.Buying;
 							var initKrwQuantity = pair.MarketCap * 0.05m;
 							ai.Income(pair.QuoteAsset, initKrwQuantity);
 						}
 						break;
 
-						// 일반AI: pair 시총의 0.1% ~ 1%의 자금을 가지고 시작
+					// 일반AI: pair 시총의 0.0001% ~ 0.1%의 자금을 가지고 시작, 일반AI는 1,000명~10,000명
 					case RicherAiType.Commoner:
 						{
-							// 랜덤 모듈 구현해야지
-							var initKrwQuantity = pair.MarketCap * 0.05m;
+							var initKrwQuantity = pair.MarketCap * r.NextNd(0.000001m, 0.001m);
 							ai.Income(pair.QuoteAsset, initKrwQuantity);
 						}
 						break;
@@ -484,6 +517,147 @@ namespace ErinWave.Richer
 			catch (Exception ex)
 			{
 				return ex.Message;
+			}
+		}
+
+		public static void ClearAi()
+		{
+			Ais.Clear();
+		}
+
+		/// <summary>
+		/// 1초에 1번 이 메서드 실행
+		/// freqTimes: 1초 실행 기준으로 1.0, 500ms 실행 기준으로 0.5, 더 빈번하게 작동시키려면 임의로 높혀도 됨
+		/// </summary>
+		public static void ProcessAi(double freqTimes = 1.0)
+		{
+			foreach (var ai in Ais)
+			{
+				switch (ai.Type)
+				{
+					case RicherAiType.Master:
+						{
+							foreach (var pair in ai.MonitorPairs)
+							{
+								// 5초에 1번 총 수량의 0.001% ~ 0.01% Maker Sell
+								if (r.NextDouble() < 0.2 * freqTimes)
+								{
+									var sellQuantity = Math.Min(ai.GetAssetQuantity(pair.BaseAsset), pair.TotalCount * r.NextNd(0.00001m, 0.0001m));
+									PlaceBestMakerOrder(ai, pair.Symbol, OrderSide.Sell, sellQuantity);
+								}
+							}
+						}
+						break;
+
+					case RicherAiType.Whale:
+						{
+							foreach (var pair in ai.MonitorPairs)
+							{
+								// 매집상태에서 30초에 1번 이전 1분간 1 ~ 5% 이상 하락 시 자산의 1% ~ 2% limit buy
+								if (ai.WhaleMode == RicherWhaleMode.Buying &&
+									r.NextDouble() < 0.033 * freqTimes &&
+									pair.Chart.M1[^1].Change <= (decimal)r.NextDouble(1, 5))
+								{
+									var buyQuantity = ai.GetEstimatedAsset() * r.NextNd(0.01m, 0.02m);
+									PlaceBestMakerOrder(ai, pair.Symbol, OrderSide.Buy, buyQuantity);
+								}
+								// Forcing상태에서 10초에 1번 자산의 0.2% ~ 0.5% market buy
+								else if (ai.WhaleMode == RicherWhaleMode.Forcing &&
+									r.NextDouble() < 0.1 * freqTimes)
+								{
+									var buyQuantity = ai.GetEstimatedAsset() * r.NextNd(0.002m, 0.005m);
+									PlaceOrder(ai, pair.Symbol, OrderSide.Buy, OrderType.Market, buyQuantity);
+								}
+								// 매도상태에서 8초에 1번 자산의 0.8% ~ 2% market sell
+								else if (ai.WhaleMode == RicherWhaleMode.Selling &&
+									r.NextDouble() < 0.125 * freqTimes)
+								{
+									var sellQuantity = ai.GetEstimatedAsset() * r.NextNd(0.008m, 0.02m);
+									PlaceOrder(ai, pair.Symbol, OrderSide.Sell, OrderType.Market, sellQuantity);
+								}
+								// 매집상태에서 보유량이 자산대비 50% 이상이면 Forcing
+								else if (ai.WhaleMode == RicherWhaleMode.Buying &&
+									ai.GetHoldingRatio(pair) >= 0.5m)
+								{
+									ai.WhaleMode = RicherWhaleMode.Forcing;
+								}
+								// Forcing 상태에서 보유량이 자산대비 80% 이상이면 매도모드
+								else if (ai.WhaleMode == RicherWhaleMode.Forcing &&
+									ai.GetHoldingRatio(pair) >= 0.8m)
+								{
+									ai.WhaleMode = RicherWhaleMode.Selling;
+								}
+								// 매도상태에서 보유량이 자산대비 10% 이하면 매집모드
+								else if (ai.WhaleMode == RicherWhaleMode.Selling &&
+									ai.GetHoldingRatio(pair) <= 0.1m)
+								{
+									ai.WhaleMode = RicherWhaleMode.Buying;
+								}
+							}
+						}
+						break;
+
+					case RicherAiType.Commoner:
+						{
+							foreach (var pair in ai.MonitorPairs)
+							{
+								// 20초에 1번 전량 지정가/시장가 매수/매도
+								if (r.NextDouble() < 0.05 * freqTimes)
+								{
+									switch (r.Next(2))
+									{
+										case 0:
+											{
+												switch (r.Next(2))
+												{
+													case 0:
+														{
+															var quantity = ai.GetAvailableBuyQuantity(pair) * pair.MarketMaxRate;
+															PlaceOrder(ai, pair.Symbol, OrderSide.Buy, OrderType.Market, quantity);
+														}
+														break;
+
+													case 1:
+														{
+															var price = pair.Price * r.NextNd(0.95m, 1.0m); // 현재가의 -5 ~ 0% 호가
+															var quantity = ai.GetAvailableBuyQuantity(pair);
+															PlaceOrder(ai, pair.Symbol, OrderSide.Buy, OrderType.Limit, quantity, price);
+														}
+														break;
+												}
+											}
+											break;
+
+										case 1:
+											{
+												switch (r.Next(2))
+												{
+													case 0:
+														{
+															var quantity = ai.GetAssetQuantity(pair.BaseAsset);
+															PlaceOrder(ai, pair.Symbol, OrderSide.Sell, OrderType.Market, quantity);
+														}
+														break;
+
+													case 1:
+														{
+															var price = pair.Price * r.NextNd(1.0m, 1.05m); // 현재가의 0 ~ +5% 호가
+															var quantity = ai.GetAssetQuantity(pair.BaseAsset);
+															PlaceOrder(ai, pair.Symbol, OrderSide.Sell, OrderType.Limit, quantity, price);
+														}
+														break;
+												}
+											}
+											break;
+									}
+								}
+							}
+						}
+						break;
+
+					default:
+						break;
+				}
 			}
 		}
 		#endregion

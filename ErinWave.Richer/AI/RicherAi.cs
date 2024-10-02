@@ -8,6 +8,10 @@ namespace ErinWave.Richer.AI
 	{
 		public RicherAiType Type { get; set; } = RicherAiType.None;
 
+		public List<RicherPair> MonitorPairs { get; set; } = [];
+
+		public RicherWhaleMode WhaleMode { get; set; }
+
 		public RicherAi(string id, string name, RicherAiType type)
 		{
 			Id = id;

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using ErinWave.Richer.Maths;
+
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,26 +24,27 @@ namespace ErinWave.Tests.WpfTest
 		{
 			InitializeComponent();
 
-			timer = new System.Timers.Timer(990);
-			timer.Elapsed += Timer_Elapsed;
-			timer.Start();
+			SmartRandom s = new SmartRandom();
 
-			RM.Human = new RicherHuman
+			for (int i = 0; i < 1_000_0000; i++)
 			{
-				Wallet = new RicherWallet()
-			};
-			RM.Human.Wallet.Assets.Add(new RicherWalletAsset("A", 123));
-			RM.Human.Wallet.Assets.Add(new RicherWalletAsset("B", 1423));
-			RM.Human.Wallet.Assets.Add(new RicherWalletAsset("C", 12423));
-			//NameDataGrid.ItemsSource = RM.Human.Wallet.Assets;
-		}
+				s.Next(1, 100);
+			}
 
-		private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-		{
-			DispatcherService.Invoke(() =>
+			for (int i = 0; i < 1_000_0000; i++)
 			{
-				NameDataGrid.ItemsSource = RM.Human.Wallet.Assets;
-			});
+				s.NextDouble();
+			}
+
+			for (int i = 0; i < 1_000_0000; i++)
+			{
+				s.NextNd(1.0, 100.0);
+			}
+
+			for (int i = 0; i < 1_000_0000; i++)
+			{
+				s.NextNd(1m, 100m);
+			}
 		}
 
 		private void OrderCancelButton_Click(object sender, RoutedEventArgs e)

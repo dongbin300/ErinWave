@@ -29,5 +29,48 @@ namespace ErinWave.Richer.Models
 		{
 			Wallet.IncomeAsset(assetName, quantity);
 		}
+
+		public decimal GetEstimatedAsset()
+		{
+			var result = Wallet.KrwQuantity;
+
+			foreach (var asset in Wallet.Assets)
+			{
+				var pair = RM.Exchange.GetPair(asset.Name + "KRW");
+				if (pair == null)
+				{
+					continue;
+				}
+
+				result += pair.Price * asset.Quantity;
+			}
+
+			return result;
+		}
+
+		public decimal GetAssetQuantity(string assetName)
+		{
+			return Wallet.GetAssetQuantity(assetName);
+		}
+
+		public decimal GetAssetAmount(string assetName)
+		{
+			var pair = RM.Exchange.GetPair(assetName + "KRW");
+			if (pair == null)
+			{
+				return 0;
+			}
+			return pair.Price * GetAssetQuantity(assetName);
+		}
+
+		public decimal GetHoldingRatio(RicherPair pair)
+		{
+			return GetAssetAmount(pair.BaseAsset) / GetEstimatedAsset();
+		}
+
+		public decimal GetAvailableBuyQuantity(RicherPair pair)
+		{
+			return Wallet.KrwQuantity / pair.Price;
+		}
 	}
 }

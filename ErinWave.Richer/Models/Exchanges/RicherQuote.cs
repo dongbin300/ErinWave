@@ -1,4 +1,6 @@
-﻿namespace ErinWave.Richer.Models.Exchanges
+﻿using ErinWave.Richer.Enums;
+
+namespace ErinWave.Richer.Models.Exchanges
 {
 	public class RicherQuote
 	{
@@ -8,8 +10,11 @@
 		public decimal Low { get; set; }
 		public decimal Close { get; set; }
 		public decimal Volume { get; set; }
+		public CandlestickType CandlestickType => Open < Close ? CandlestickType.Bullish : Open > Close ? CandlestickType.Bearish : CandlestickType.Doji;
+        public decimal Change => (Close - Open) / Open * 100;
+		public decimal BodyLength => Math.Abs(Change);
 
-        public RicherQuote()
+		public RicherQuote()
         {
             
         }
