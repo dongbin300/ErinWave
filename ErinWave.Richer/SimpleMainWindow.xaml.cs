@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ErinWave.Richer.Enums;
+using ErinWave.Richer.Models.Exchanges;
+using ErinWave.Richer.Util;
+
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using ErinWave.Richer.Models;
-using ErinWave.Richer.Models.Exchanges;
-using ErinWave.Richer.Enums;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-using ErinWave.Richer.Util;
 
 namespace ErinWave.Richer
 {
@@ -37,32 +24,19 @@ namespace ErinWave.Richer
 
 			RM.Init();
 			RM.Load();
+			RM.InitAfterLoad();
 
-			//RM.Ais.Add(new AI.RicherAi()
-			//{
-			//	Id = "AI_000001",
-			//	Name = "AI_1번",
-			//	Wallet = new RicherWallet()
-			//});
+			RM.CreateAi(RicherAiType.Master, "TRCKRW");
 
-			//RM.Ais.Add(new AI.RicherAi()
-			//{
-			//	Id = "AI_000002",
-			//	Name = "AI_2번",
-			//	Wallet = new RicherWallet()
-			//});
+			for (var i = 0; i < 10; i++)
+			{
+				RM.CreateAi(RicherAiType.Whale, "TRCKRW");
+			}
 
-			//RM.Exchange.Pairs[0].Orders = [];
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Buy, 99.9m, 3.3m));
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Buy, 99.8m, 4.2m));
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Buy, 99.6m, 5.3m));
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Buy, 99.9m, 6.1m));
-
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Sell, 100.1m, 6.1m));
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Sell, 100.2m, 3.4m));
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Sell, 101.0m, 12.5m));
-			//RM.Exchange.Pairs[0].Orders.Add(new RicherOrder(new DateTime(2000, 1, 1), "1", OrderType.Sell, 100.1m, 6.1m));
-
+			for (var i = 0; i < 100; i++)
+			{
+				RM.CreateAi(RicherAiType.Commoner, "TRCKRW");
+			}
 		}
 
 		private void DrawOrderBook()
@@ -70,7 +44,7 @@ namespace ErinWave.Richer
 			OrderBookGrid.Children.Clear();
 
 			var orderBook = RM.Exchange.Pairs[0].OrderBook;
-			for (int i = orderBook.SellTicks.Count - 1; i >= 0; i--)
+			for (int i = Math.Min(9, orderBook.SellTicks.Count - 1); i >= 0; i--)
 			{
 				var tick = orderBook.SellTicks[i];
 				var priceTextBlock = new TextBlock()
@@ -94,7 +68,7 @@ namespace ErinWave.Richer
 			OrderBookGrid.Children.Add(emptyTextBlock);
 
 
-			for (int i = 0; i < orderBook.BuyTicks.Count; i++)
+			for (int i = 0; i < Math.Min(10, orderBook.BuyTicks.Count); i++)
 			{
 				var tick = orderBook.BuyTicks[i];
 				var priceTextBlock = new TextBlock()
@@ -110,18 +84,47 @@ namespace ErinWave.Richer
 			}
 		}
 
+		private void DrawTransaction()
+		{
+			TransactionGrid.Children.Clear();
+
+			var transactions = RM.Exchange.Pairs[0].Transactions.OrderByDescending(x => x.Time).Take(15);
+			foreach (var transaction in transactions)
+			{
+				var priceTextBlock = new TextBlock()
+				{
+					Text = transaction.Price.ToString()
+				};
+				var quantityTextBlock = new TextBlock()
+				{
+					Text = transaction.Quantity.ToString()
+				};
+				TransactionGrid.Children.Add(priceTextBlock);
+				TransactionGrid.Children.Add(quantityTextBlock);
+			}
+		}
+
 		private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
 		{
-			RM.RicherTime = RM.RicherTime.AddSeconds(1);
-
-			DispatcherService.Invoke(() =>
+			try
 			{
-				DrawOrderBook();
-				AssetDataGrid.ItemsSource = null;
-				AssetDataGrid.ItemsSource = RM.Human.Wallet.Assets;
-				OrderDataGrid.ItemsSource = null;
-				OrderDataGrid.ItemsSource = RM.Exchange.Pairs[0].Orders.Where(x => x.MakerId.Equals(RM.Human.Id)).ToList();
-			});
+				RM.RicherTime = RM.RicherTime.AddSeconds(1);
+				RM.ProcessAi(0.2);
+
+				DispatcherService.Invoke(() =>
+				{
+					DrawOrderBook();
+					DrawTransaction();
+					AssetDataGrid.ItemsSource = null;
+					AssetDataGrid.ItemsSource = RM.Human.Wallet.Assets;
+					OrderDataGrid.ItemsSource = null;
+					OrderDataGrid.ItemsSource = RM.Exchange.Pairs[0].Orders.Where(x => x.MakerId.Equals(RM.Human.Id)).ToList();
+				});
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString());
+			}
 		}
 
 		private void LimitButton_Click(object sender, RoutedEventArgs e)

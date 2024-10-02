@@ -37,6 +37,7 @@ namespace ErinWave.Richer.Models.Exchanges
 		public int MaxLeverage { get; set; }
 		public decimal MinOrderQuantity { get; set; }
 		public decimal MaxOrderQuantity { get; set; }
+		public decimal TickQuantity { get; set; }
 
 		/// <summary>
 		/// 시장가 주문시 Max 비율
@@ -57,7 +58,7 @@ namespace ErinWave.Richer.Models.Exchanges
 
 		public RicherOrderBook GetOrderBook()
 		{
-			var orderBook = new RicherOrderBook();
+			var orderBook = new RicherOrderBook(Price, TickPrice);
 
 			var sellOrders = Orders
 				.Where(o => o.OrderSide == OrderSide.Sell && o.Remained > 0)
@@ -105,7 +106,9 @@ namespace ErinWave.Richer.Models.Exchanges
 		public void AddTransaction(DateTime time, decimal price, decimal quantity, string makerId, string takerId)
 		{
 			var id = Transactions.Count + 1;
-			Transactions.Add(new RicherTransaction(id, time, price, quantity, makerId, takerId));
+			var transaction = new RicherTransaction(id, time, price, quantity, makerId, takerId);
+			Transactions.Add(transaction);
+			Chart.Add(transaction);
 		}
 	}
 }
