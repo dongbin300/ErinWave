@@ -117,7 +117,7 @@ namespace ErinWave.M5Server
 								case "!직업":
 									if (segment.Length == 1)
 									{
-										SendSystemMessage("궁수, 바바리안, 검투사, 사냥꾼, 마법사, 닌자, 성기사, 주술사, 도적, 발키리 중 택 1");
+										SendSystemMessage("**직업\r\n바바리안\r\n손에 든 카드 3장을 랜덤으로 버리고 몬스터 하나를 처치합니다.\r\n\r\n검투사\r\n손에 든 카드 3장을 랜덤으로 버리고 인간 하나를 처치합니다.\r\n\r\n성기사\r\n손에 든 카드 3장을 랜덤으로 버리고 몬스터 하나를 처치합니다.\r\n\r\n발키리\r\n손에 든 카드 3장을 랜덤으로 버리고 모든 플레이어가 행동카드 2장씩 뽑습니다.\r\n\r\n궁수\r\n손에 든 카드 3장을 랜덤으로 버리고 인간 하나를 처치합니다.\r\n\r\n사냥꾼\r\n손에 든 카드 3장을 랜덤으로 버리고 상대방이 행동카드 4장을 뽑습니다.\r\n\r\n마법사\r\n손에 든 카드 3장을 랜덤으로 버리고 누군가 카드를 내려놓기 전까지, 시간을 잠시 멈춥니다.\r\n\r\n주술사\r\n손에 든 카드 3장을 랜덤으로 버리고 장애물 하나를 돌파합니다.\r\n\r\n도적\r\n손에 든 카드 3장을 랜덤으로 버리고 행동카드 5장을 뽑습니다.\r\n\r\n닌자\r\n손에 든 카드 3장을 랜덤으로 버리고 장애물 하나를 돌파합니다.");
 									}
 									else
 									{
@@ -141,7 +141,13 @@ namespace ErinWave.M5Server
 												{
 													SendSystemMessage("상대가 고른 직업입니다.");
 												}
-												else
+												else if (M5Manager.GetOtherPlayer(Id).Job == string.Empty) // 아직 상대방이 직업을 안고른 경우
+												{
+													Player.Job = segment[1];
+													SendSystemMessage($"직업 선택: {segment[1]}");
+													SendGameStatus();
+												}
+												else // 모두 직업을 고른 경우
 												{
 													Player.Job = segment[1];
 													SendSystemMessage("직업 선택 완료");
@@ -160,19 +166,50 @@ namespace ErinWave.M5Server
 								case "!시작":
 									if (segment.Length == 1)
 									{
-										SendSystemMessage("!시작 3 => 3스테이지 게임을 시작합니다. (1,2,3,4,5 스테이지만 구현되어 있습니다.)");
+										SendSystemMessage("!시작 3 => 3스테이지 게임을 시작합니다. (1~12 스테이지 구현되어 있습니다.)");
 									}
 									else
 									{
-										var stage = int.Parse(segment[1]);
-										M5Manager.Field.SetGame(stage);
-										M5Manager.Stage = stage;
+										if (M5Manager.Players.Any(x => x.Job == string.Empty))
+										{
+											SendSystemMessage("플레이어 모두 직업을 선택해 주세요.");
+										}
+										else
+										{
+											var stage = int.Parse(segment[1]);
 
-										DistributeDeck();
+											if(stage > 12)
+											{
+												SendSystemMessage($"없는 스테이지입니다.");
+											}
+											else
+											{
+												M5Manager.Field.SetGame(stage);
+												M5Manager.Stage = stage;
 
-										SendSystemMessage($"{stage} 스테이지가 시작되었습니다.");
-										SendGameStatus();
+												DistributeDeck();
+
+												if(stage > 5)
+												{
+													var additionalDeckCount = stage - 5;
+													foreach (var player in M5Manager.Players)
+													{
+														player.GetAdditionalDeck(additionalDeckCount);
+														player.ShuffleDeck();
+													}
+												}
+
+												SendSystemMessage($"{stage} 스테이지가 시작되었습니다.");
+												SendGameStatus();
+											}
+
+										}
 									}
+									break;
+
+
+								case "!패치":
+									SendSystemMessage("**변경된 사항들\r\n- 직업 선택\r\n2인 플레이 시, 직업 1개씩 고르고 덱은 추가로 원하는 색깔 하나를 더 가져올 수 있음\r\n-> 무조건 2인 플레이, 직업 1개씩 고르고 덱은 나머지 덱 3개 중에 랜덤으로 가져와짐\r\n\r\n- 직업 능력\r\n모든 능력은\r\n손에 든 행동 카드를 3장 버리고\r\n-> 손에 든 카드 3장을 랜덤으로 버리고\r\n\r\n사냥꾼\r\n다른 플레이어 1명을 골라 행동카드 4장을 뽑게 합니다.\r\n-> 상대방에게 행동카드 4장을 뽑게 합니다.\r\n\r\n발키리\r\n자신을 제외한 모든 플레이어가 행동카드 2장씩 뽑습니다.\r\n-> 모든 플레이어가 행동카드 2장씩 뽑습니다.\r\n\r\n- 위기\r\n아야아야 해쪄\r\n모든 플레이어는 카드 1장씩 버립니다.\r\n-> 모든 플레이어는 랜덤으로 카드 1장씩 버립니다.\r\n\r\n덜커덩\r\n모든 플레이어는 카드 3장씩 버립니다.\r\n-> 모든 플레이어는 랜덤으로 카드 3장씩 버립니다.\r\n\r\n엉망진창\r\n모든 플레이어는 손에 든 카드를 모두 다른 플레이어에게 줍니다.\r\n-> 서로 손에 든 카드를 모두 교환합니다.\r\n\r\n기습\r\n카드 삭제.\r\n\r\n- 기술\r\n분기탱천\r\n아무 플레이어 2명을 고릅니다. 그 2명은 각자 행동카드 3장씩 뽑습니다.\r\n-> 모든 플레이어는 각자 행동카드 3장을 뽑습니다.\r\n\r\n약초\r\n아무 플레이어 1명을 고릅니다. 그 플레이어는 자신의 '버린 더미'에서 맨 위 카드 4장을 가져갑니다.\r\n-> 상대방 플레이어는 자신의 '버린 더미'에서 맨 위 카드 4장을 가져갑니다.\r\n\r\n회복 물약\r\n모든 플레이어는 각자의 '버린 더미'에서 카드 3장씩 가져갑니다.\r\n-> 모든 플레이어는 각자의 '버린 더미'에서 랜덤으로 카드 3장씩 가져갑니다.\r\n\r\n치유\r\n아무 플레이어 1명을 고릅니다. 그 플레이어는 자기 '버린 더미' 카드를 모두 가져와 자기 '행동 더미' 맨 위에 얹습니다.\r\n-> 상대방 플레이어는 자기 '버린 더미' 카드를 모두 가져와 자기 '행동 더미' 맨 위에 얹습니다.\r\n\r\n기부\r\n자기 손에 든 카드를 전부 다른 플레이어 1명에게 줍니다.\r\n-> 자기 손에 든 카드를 전부 상대방에게 줍니다.\r\n\r\n도둑질\r\n다른 플레이어 1명의 손에 든 카드를 전부 가져옵니다.\r\n-> 상대방 손에 든 카드를 전부 가져옵니다.");
 									break;
 
 								default:
@@ -225,7 +262,7 @@ namespace ErinWave.M5Server
 							break;
 
 						case "3005": // 보스 처치
-							switch(M5Manager.Field.CurrentDungeon)
+							switch (M5Manager.Field.CurrentDungeon)
 							{
 								case "1":
 								case "2":

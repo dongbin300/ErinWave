@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows;
 
 namespace ErinWave.M5
 {
@@ -19,7 +17,7 @@ namespace ErinWave.M5
 		private TcpClient client = default!;
 		private NetworkStream stream = default!;
 		public bool IsInitialized { get; private set; }
-		public bool IsLocal => Dns.GetHostEntry(Dns.GetHostName()).AddressList.Any(x => x.ToString().Contains("172.30.1.95"));
+		public bool IsLocal => Dns.GetHostEntry(Dns.GetHostName()).AddressList.Any(x => x.ToString().Contains("192.168.219.101"));
 
 		public string Id = string.Empty;
 
@@ -34,7 +32,7 @@ namespace ErinWave.M5
 			try
 			{
 				using (client = new TcpClient(
-					IsLocal ? "172.30.1.95" : "175.212.176.45"
+					IsLocal ? "192.168.219.101" : "112.147.12.56"
 					, 45111))
 				{
 					LogQueue.Enqueue("접속 완료");
@@ -55,7 +53,7 @@ namespace ErinWave.M5
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				File.AppendAllText("log.txt", ex.ToString() + Environment.NewLine);
 			}
 		}
 
@@ -76,7 +74,7 @@ namespace ErinWave.M5
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				File.AppendAllText("log.txt", ex.ToString() + Environment.NewLine);
 			}
 		}
 
@@ -84,6 +82,7 @@ namespace ErinWave.M5
 		{
 			try
 			{
+				File.AppendAllText("log.txt", "PACKET: " + packetString + Environment.NewLine);
 				var packet = JsonConvert.DeserializeObject<M5Packet>(packetString) ?? default!;
 				{
 					switch (packet.Type)
@@ -225,6 +224,8 @@ namespace ErinWave.M5
 								var fileName = Common.ToFileName(card);
 								Common.FieldCurrentCardImageSource.Add(fileName);
 							}
+
+							Common.FieldDungeonCount = fieldData.Dungeons.Count;
 							break;
 
 						case "9": // 현재 남은 시간
@@ -240,7 +241,7 @@ namespace ErinWave.M5
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				File.AppendAllText("log.txt", ex.ToString() + Environment.NewLine);
 			}
 		}
 

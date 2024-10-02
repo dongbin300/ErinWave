@@ -66,11 +66,13 @@ namespace ErinWave.M5
 			MeUsedCountText.Visibility = Common.MeJobImageSource == null ? Visibility.Hidden : Visibility.Visible;
 			YouDeckCountText.Visibility = Common.YouJobImageSource == null ? Visibility.Hidden : Visibility.Visible;
 			YouUsedCountText.Visibility = Common.YouJobImageSource == null ? Visibility.Hidden : Visibility.Visible;
+			FieldDungeonCountText.Visibility = Common.FieldDungeonImageSource == null ? Visibility.Hidden : Visibility.Visible;
 
 			MeDeckCountText.Text = Common.MeDeckCount.ToString();
 			MeUsedCountText.Text = Common.MeUsedCount.ToString();
 			YouDeckCountText.Text = Common.YouDeckCount.ToString();
 			YouUsedCountText.Text = Common.YouUsedCount.ToString();
+			FieldDungeonCountText.Text = Common.FieldDungeonCount.ToString();
 
 			RemainTimeProgressBar.SetText(Common.RemainTimeString);
 			RemainTimeProgressBar.SetValue((double)Common.RemainSeconds);

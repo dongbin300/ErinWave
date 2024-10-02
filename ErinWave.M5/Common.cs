@@ -27,6 +27,7 @@
 		public static string? FieldDungeonImageSource = null;
 		public static string? FieldCurrentDungeonImageSource = null;
 		public static List<string?> FieldCurrentCardImageSource = [];
+		public static int FieldDungeonCount = 0;
 
 		public static string? ToFileName(string cardId)
 		{

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ErinWave.M5"
         mc:Ignorable="d" ResizeMode="NoResize"
-        Title="5분 던전" Height="1120" Width="1750" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="5분 던전" Height="1040" Width="1770" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -20,7 +20,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="600"/>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="420"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
@@ -60,6 +60,7 @@
                     </Grid.RowDefinitions>
                     <Image x:Name="FieldCurrentDungeonImage" Grid.Column="1" Grid.Row="1" Stretch="Fill" HorizontalAlignment="Left" Width="210" Height="294" MouseLeftButtonDown="FieldCurrentDungeonImage_MouseLeftButtonDown" />
                     <Image x:Name="FieldDungeonImage" Grid.Column="1" Grid.Row="1" Stretch="Fill" HorizontalAlignment="Right" Width="210" Height="294" MouseLeftButtonDown="FieldDungeonImage_MouseLeftButtonDown"/>
+                    <TextBlock x:Name="FieldDungeonCountText" Grid.Column="1" Grid.Row="1" Margin="400,250,0,0" Width="40" Height="30" Text="" Background="Black" Foreground="White" FontSize="22" Padding="8,0" Visibility="Hidden"/>
                 </Grid>
 
                 <Image x:Name="MeJobImage" Grid.Row="2" Stretch="Fill" />
@@ -92,7 +93,7 @@
                     <WrapPanel x:Name="YouHandPanel" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Width="600"/>
                 </Grid>
 
-                <Grid Grid.Row="1" Background="#CDE">
+                <Grid Grid.Row="1" Background="#999">
                     <WrapPanel x:Name="FieldPanel" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Width="600"/>
                 </Grid>
 
@@ -109,7 +110,7 @@
                 <ListBox x:Name="LogListBox" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" TextWrapping="Wrap" Width="380"/>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" Width="385"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
