@@ -1,4 +1,6 @@
-﻿namespace ErinWave.Richer.Models.Exchanges
+﻿using System.Windows.Media;
+
+namespace ErinWave.Richer.Models.Exchanges
 {
 	public class RicherTransaction
 	{
@@ -27,15 +29,22 @@
 		/// Transaction Amount
 		/// </summary>
 		public decimal Amount => Price * Quantity;
+		/// <summary>
+		/// Whether Taker Buy
+		/// </summary>
+		public bool IsTakerBuy { get; set; }
+		public SolidColorBrush PriceColor => IsTakerBuy ? Common.LongColor : Common.ShortColor;
 
-        public RicherTransaction(int id, DateTime time, decimal price, decimal quantity, string makerId, string takerId)
-        {
+
+		public RicherTransaction(int id, DateTime time, decimal price, decimal quantity, string makerId, string takerId, bool isTakerBuy)
+		{
 			Id = id;
 			Time = time;
 			Price = price;
 			Quantity = quantity;
 			MakerId = makerId;
 			TakerId = takerId;
-        }
-    }
+			IsTakerBuy = isTakerBuy;
+		}
+	}
 }

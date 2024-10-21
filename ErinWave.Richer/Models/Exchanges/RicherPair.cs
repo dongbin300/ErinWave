@@ -2,24 +2,29 @@
 
 namespace ErinWave.Richer.Models.Exchanges
 {
-	public class RicherPair
+	public class RicherPair(string symbol)
 	{
 		/// <summary>
 		/// BTCUSDT
 		/// </summary>
-		public string Symbol { get; set; }
+		public string Symbol { get; set; } = symbol;
 		/// <summary>
 		/// BTC
 		/// </summary>
-		public string BaseAsset { get; set; }
+		public string BaseAsset { get; set; } = string.Empty;
 		/// <summary>
 		/// USDT
 		/// </summary>
-		public string QuoteAsset { get; set; }
+		public string QuoteAsset { get; set; } = string.Empty;
 		/// <summary>
 		/// Current Price
 		/// </summary>
 		public decimal Price { get; set; }
+		/// <summary>
+		/// List Price
+		/// </summary>
+		public decimal ListPrice { get; set; }
+
 		/// <summary>
 		/// Managing only open orders
 		/// </summary>
@@ -27,8 +32,9 @@ namespace ErinWave.Richer.Models.Exchanges
 		public List<RicherOpenOrder> SellOrders => [.. Orders.Where(x => x.OrderSide.Equals(OrderSide.Sell)).OrderBy(x => x.Price).ThenBy(x => x.Time)];
 		public List<RicherOpenOrder> BuyOrders => [.. Orders.Where(x => x.OrderSide.Equals(OrderSide.Buy)).OrderByDescending(x => x.Price).ThenBy(x => x.Time)];
 		public List<RicherTransaction> Transactions { get; set; } = [];
-		public RicherOrderBook OrderBook => GetOrderBook();
-		public RicherChart Chart { get; set; }
+		public RicherTransaction? LastTransaction => Transactions.OrderByDescending(x => x.Time).FirstOrDefault();
+		public RicherOrderBook OrderBook => GetOrderBook(TickPrice);
+		public RicherChart Chart { get; set; } = new RicherChart();
 
 		public decimal MinPrice { get; set; }
 		public decimal MaxPrice { get; set; }
@@ -50,19 +56,13 @@ namespace ErinWave.Richer.Models.Exchanges
 		/// </summary>
 		public decimal MarketCap => Price * TotalCount;
 
-		public RicherPair(string symbol)
+		public RicherOrderBook GetOrderBook(decimal tickSize)
 		{
-			Symbol = symbol;
-			Chart = new RicherChart();
-		}
-
-		public RicherOrderBook GetOrderBook()
-		{
-			var orderBook = new RicherOrderBook(Price, TickPrice);
+			var orderBook = new RicherOrderBook(Price, tickSize);
 
 			var sellOrders = Orders
 				.Where(o => o.OrderSide == OrderSide.Sell && o.Remained > 0)
-				.GroupBy(o => o.Price)
+				.GroupBy(o => Math.Ceiling(o.Price / tickSize) * tickSize)
 				.Select(g => new RicherOrderBookTick(OrderSide.Sell, g.Key, g.Sum(o => o.Remained)))
 				.OrderBy(tick => tick.Price)
 				.Take(100)
@@ -70,7 +70,7 @@ namespace ErinWave.Richer.Models.Exchanges
 
 			var buyOrders = Orders
 				.Where(o => o.OrderSide == OrderSide.Buy && o.Remained > 0)
-				.GroupBy(o => o.Price)
+				.GroupBy(o => Math.Floor(o.Price / tickSize) * tickSize)
 				.Select(g => new RicherOrderBookTick(OrderSide.Buy, g.Key, g.Sum(o => o.Remained)))
 				.OrderByDescending(tick => tick.Price)
 				.Take(100)
@@ -103,12 +103,29 @@ namespace ErinWave.Richer.Models.Exchanges
 			RemoveOrder(order);
 		}
 
-		public void AddTransaction(DateTime time, decimal price, decimal quantity, string makerId, string takerId)
+		public List<RicherOpenOrder> GetOpenOrders(string playerId)
+		{
+			return Orders.Where(x=>x.MakerId.Equals(playerId)).ToList();
+		}
+
+		public void AddTransaction(DateTime time, decimal price, decimal quantity, string makerId, string takerId, bool isTakerBuy)
 		{
 			var id = Transactions.Count + 1;
-			var transaction = new RicherTransaction(id, time, price, quantity, makerId, takerId);
+			var transaction = new RicherTransaction(id, time, price, quantity, makerId, takerId, isTakerBuy);
 			Transactions.Add(transaction);
 			Chart.Add(transaction);
+		}
+
+		public List<RicherTransactionHistory> GetTransactionHistories(string playerId)
+		{
+			return Transactions.Where(x => x.MakerId.Equals(playerId) || x.TakerId.Equals(playerId)).ToList()
+				.Select(x =>
+				new RicherTransactionHistory(
+					x.Id, x.Time, x.Price, x.Quantity,
+					side: x.MakerId == playerId && x.IsTakerBuy || x.TakerId == playerId && !x.IsTakerBuy ? OrderSide.Sell : OrderSide.Buy,
+					isMaker: x.MakerId == playerId
+					)).ToList();
+
 		}
 	}
 }

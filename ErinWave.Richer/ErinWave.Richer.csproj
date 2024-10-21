@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.8" />
   </ItemGroup>
 
 </Project>

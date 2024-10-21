@@ -2,7 +2,8 @@
 {
 	public class SmartRandom
 	{
-		long seed;
+		private long seed;
+		private long GetCurrentMicroseconds() => DateTime.Now.Ticks / 10L;
 
 		public SmartRandom()
 		{
@@ -14,19 +15,32 @@
 			this.seed = seed;
 		}
 
+		/// <summary>
+		/// Range: 0 ~ 2,147,483,647(int.MaxValue)
+		/// </summary>
+		/// <returns></returns>
 		public int Next()
 		{
-			long abc = Math.Abs(GetCurrentMicroseconds() * seed % 1_000_000_000L / 10);
 			seed += 13;
-
-			return Convert.ToInt32(abc);
+			return (int)(GetCurrentMicroseconds() % int.MaxValue * seed % int.MaxValue);
 		}
 
+		/// <summary>
+		/// Range: min ~ max-1
+		/// </summary>
+		/// <param name="min"></param>
+		/// <param name="max"></param>
+		/// <returns></returns>
 		public int Next(int min, int max)
 		{
 			return Next() % (max - min) + min;
 		}
 
+		/// <summary>
+		/// Range: 0 ~ max-1
+		/// </summary>
+		/// <param name="max"></param>
+		/// <returns></returns>
 		public int Next(int max)
 		{
 			return Next() % max;
@@ -52,9 +66,13 @@
 			return values.ElementAt(Next(values.Count()));
 		}
 
+		/// <summary>
+		/// Range: 0.0 ~ 1.0
+		/// </summary>
+		/// <returns></returns>
 		public double NextDouble()
 		{
-			return (double)Next() / 1_000_000_000L;
+			return (double)Next() / int.MaxValue;
 		}
 
 		public double NextDouble(double min, double max)
@@ -65,6 +83,25 @@
 		public double NextDouble(double max)
 		{
 			return NextDouble() % max;
+		}
+
+		/// <summary>
+		/// Range: 0.0 ~ 1.0
+		/// </summary>
+		/// <returns></returns>
+		public decimal NextDecimal()
+		{
+			return (decimal)Next() / int.MaxValue;
+		}
+
+		public decimal NextDecimal(decimal min, decimal max)
+		{
+			return NextDecimal() % (max - min) + min;
+		}
+
+		public decimal NextDecimal(decimal max)
+		{
+			return NextDecimal() % max;
 		}
 
 		/// <summary>
@@ -125,11 +162,6 @@
 			decimal randNormal = mean + stddev * (decimal)randStdNormal;
 
 			return Math.Clamp(randNormal, min, max);
-		}
-
-		long GetCurrentMicroseconds()
-		{
-			return DateTime.Now.Ticks / 10L;
 		}
 	}
 }

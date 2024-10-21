@@ -1,4 +1,6 @@
-﻿namespace ErinWave.Richer.Models.Exchanges
+﻿using ErinWave.Richer.Enums;
+
+namespace ErinWave.Richer.Models.Exchanges
 {
 	/// <summary>
 	/// 파일에 저장하는 객체: Transactions
@@ -11,10 +13,10 @@
 		public List<RicherQuote> M1 { get; set; } = [];
 		public List<RicherQuote> H1 { get; set; } = [];
 
-        public RicherChart()
-        {
-            
-        }
+		public RicherChart()
+		{
+
+		}
 
 		public RicherChart(List<RicherTransaction> initTransactions)
 		{
@@ -181,6 +183,49 @@
 					H1[^1].Volume += quantity;
 				}
 			}
+		}
+
+		public List<RicherQuote> GetCharts(RicherInterval interval)
+		{
+			List<RicherQuote> sourceData;
+
+			if ((int)interval < 60)
+			{
+				sourceData = S1;
+			}
+			else if ((int)interval < 3600)
+			{
+				sourceData = M1;
+			}
+			else
+			{
+				sourceData = H1;
+			}
+
+			var result = new List<RicherQuote>();
+
+			var groupedData = sourceData.GroupBy(quote =>
+				quote.Time.Ticks / ((int)interval * TimeSpan.TicksPerSecond)
+			);
+
+			foreach (var group in groupedData)
+			{
+				var groupList = group.ToList();
+				var first = groupList.First();
+				var last = groupList.Last();
+
+				result.Add(new RicherQuote(
+					new DateTime(first.Time.Year, first.Time.Month, first.Time.Day,
+								 first.Time.Hour, first.Time.Minute, first.Time.Second),
+					first.Open,
+					groupList.Max(q => q.High),
+					groupList.Min(q => q.Low),
+					last.Close,
+					groupList.Sum(q => q.Volume)
+				));
+			}
+
+			return result;
 		}
 	}
 }

@@ -65,7 +65,15 @@ namespace ErinWave.Richer.Models
 
 		public decimal GetHoldingRatio(RicherPair pair)
 		{
-			return GetAssetAmount(pair.BaseAsset) / GetEstimatedAsset();
+			var estimatedAsset = GetEstimatedAsset();
+			if (estimatedAsset == 0)
+			{
+				return 0;
+			}
+			else
+			{
+				return GetAssetAmount(pair.BaseAsset) / estimatedAsset;
+			}
 		}
 
 		public decimal GetAvailableBuyQuantity(RicherPair pair)

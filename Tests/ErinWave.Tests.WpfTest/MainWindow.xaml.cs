@@ -1,15 +1,6 @@
 ﻿using ErinWave.Richer.Maths;
 
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ErinWave.Tests.WpfTest
 {
@@ -19,6 +10,7 @@ namespace ErinWave.Tests.WpfTest
 	public partial class MainWindow : Window
 	{
 		System.Timers.Timer timer;
+		private decimal maxQuantity;
 
 		public MainWindow()
 		{
@@ -26,29 +18,12 @@ namespace ErinWave.Tests.WpfTest
 
 			SmartRandom s = new SmartRandom();
 
-			for (int i = 0; i < 1_000_0000; i++)
+			List<decimal> list = new List<decimal>();
+			for(int i=0; i < 1000; i++)
 			{
-				s.Next(1, 100);
+				list.Add(s.NextNd(0.98m, 1.02m));
 			}
 
-			for (int i = 0; i < 1_000_0000; i++)
-			{
-				s.NextDouble();
-			}
-
-			for (int i = 0; i < 1_000_0000; i++)
-			{
-				s.NextNd(1.0, 100.0);
-			}
-
-			for (int i = 0; i < 1_000_0000; i++)
-			{
-				s.NextNd(1m, 100m);
-			}
-		}
-
-		private void OrderCancelButton_Click(object sender, RoutedEventArgs e)
-		{
 
 		}
 	}

@@ -5,22 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ErinWave.Tests.WpfTest"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="500">
+
+
     <Grid>
-        <!--<TextBox x:Name="NameTextBox"/>-->
-        <!--<ListBox x:Name="NameListBox"/>-->
-        <DataGrid x:Name="NameDataGrid" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*"/>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="1*"/>
-                <DataGridTemplateColumn Header="Cancel" Width="1*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Cancel" Click="OrderCancelButton_Click" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
     </Grid>
 </Window>
