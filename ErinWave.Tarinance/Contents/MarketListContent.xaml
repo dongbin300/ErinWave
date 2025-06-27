@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ErinWave.Tarinance.Contents.MarketListContent">
+    <Grid Padding="0,3" Background="#111">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3"/>
+            <RowDefinition Height="2"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" x:Name="StatusBar"/>
+        <Label Grid.Row="0" Grid.Column="1" x:Name="NameText"/>
+        <Label Grid.Row="0" Grid.Column="2" x:Name="PriceText" HorizontalTextAlignment="End"/>
+        <Label Grid.Row="0" Grid.Column="3" x:Name="ChangePerText" HorizontalTextAlignment="End"/>
+        <Label Grid.Row="1" Grid.Column="1" x:Name="SymbolText" TextColor="#999" Opacity="0.7"/>
+        <Label Grid.Row="1" Grid.Column="3" x:Name="ChangeValueText" HorizontalTextAlignment="End"/>
+        <Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Fill="#333"/>
+    </Grid>
+</ContentView>

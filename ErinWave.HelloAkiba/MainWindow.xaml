@@ -1,0 +1,53 @@
+﻿<Window x:Class="ErinWave.HelloAkiba.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ErinWave.HelloAkiba"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Console" Height="300" Width="800" ResizeMode="NoResize" WindowStyle="None" Left="800" Top="1100">
+    <Window.Resources>
+        <SolidColorBrush x:Key="Background" Color="#0c0c0c"/>
+        <SolidColorBrush x:Key="Foreground" Color="#cccccc"/>
+        <FontFamily x:Key="BaseFont">Consolas</FontFamily>
+        <sys:Double x:Key="BaseFontSize">10.5</sys:Double>
+    </Window.Resources>
+    <Grid Background="{StaticResource Background}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 출력 영역 -->
+        <ScrollViewer Name="ConsoleScroll" Grid.Row="0" VerticalScrollBarVisibility="Auto" Background="{StaticResource Background}">
+            <TextBlock Name="ConsoleOutput"
+                       Background="{StaticResource Background}"
+                       Foreground="{StaticResource Foreground}"
+                       FontFamily="{StaticResource BaseFont}"
+                       FontSize="{StaticResource BaseFontSize}"
+                       TextWrapping="Wrap"
+                       Margin="8,8,8,0"
+                       Text="" />
+        </ScrollViewer>
+
+        <!-- 입력 영역 -->
+        <DockPanel Grid.Row="1" Background="{StaticResource Background}" LastChildFill="True" Margin="8,0,8,8">
+            <TextBlock Text="> "
+                       Foreground="{StaticResource Foreground}"
+                       FontFamily="{StaticResource BaseFont}"
+                       FontSize="{StaticResource BaseFontSize}"
+                       VerticalAlignment="Center"/>
+            <TextBox Name="ConsoleInput"
+                     Background="{StaticResource Background}"
+                     Foreground="{StaticResource Foreground}"
+                     FontFamily="{StaticResource BaseFont}"
+                     FontSize="{StaticResource BaseFontSize}"
+                     BorderThickness="0"
+                     CaretBrush="{StaticResource Foreground}"
+                     Margin="0"
+                     PreviewKeyDown="ConsoleInput_KeyDown"
+                     />
+        </DockPanel>
+    </Grid>
+</Window>

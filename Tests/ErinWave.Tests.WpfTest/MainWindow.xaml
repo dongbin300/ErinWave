@@ -1,0 +1,46 @@
+﻿<Window x:Class="ErinWave.Tests.WpfTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ErinWave.Tests.WpfTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="500">
+
+    <Window.Resources>
+        <local:BarWidthMultiConverter x:Key="BarWidthMultiConverter" />
+    </Window.Resources>
+    
+    <Grid>
+        <DataGrid x:Name="DataGrid1" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="120" />
+
+                <DataGridTemplateColumn Header="Quantity" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Rectangle Height="18"
+                                   Fill="LightGreen"
+                                   HorizontalAlignment="Left"
+                                   Margin="2">
+                                    <Rectangle.Width>
+                                        <MultiBinding Converter="{StaticResource BarWidthMultiConverter}">
+                                            <Binding Path="Quantity" />
+                                            <Binding Path="QuantityMax" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=DataGridTemplateColumn}" />
+                                        </MultiBinding>
+                                    </Rectangle.Width>
+                                </Rectangle>
+                                <TextBlock Text="{Binding Quantity}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="Black" />
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

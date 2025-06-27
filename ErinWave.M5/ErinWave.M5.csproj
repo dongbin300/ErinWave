@@ -1,0 +1,437 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\act-arrow.png" />
+    <None Remove="Resources\Images\act-arrow2.png" />
+    <None Remove="Resources\Images\act-jump.png" />
+    <None Remove="Resources\Images\act-jump2.png" />
+    <None Remove="Resources\Images\act-scroll.png" />
+    <None Remove="Resources\Images\act-scroll2.png" />
+    <None Remove="Resources\Images\act-shield.png" />
+    <None Remove="Resources\Images\act-shield2.png" />
+    <None Remove="Resources\Images\act-sword.png" />
+    <None Remove="Resources\Images\act-sword2.png" />
+    <None Remove="Resources\Images\act-swordarrow.png" />
+    <None Remove="Resources\Images\act-swordjump.png" />
+    <None Remove="Resources\Images\act-swordscroll.png" />
+    <None Remove="Resources\Images\act-swordshield.png" />
+    <None Remove="Resources\Images\boss1.png" />
+    <None Remove="Resources\Images\boss2.png" />
+    <None Remove="Resources\Images\boss3.png" />
+    <None Remove="Resources\Images\boss4.png" />
+    <None Remove="Resources\Images\boss5.png" />
+    <None Remove="Resources\Images\card-crisis.png" />
+    <None Remove="Resources\Images\card-monster.png" />
+    <None Remove="Resources\Images\crisis-event-1.png" />
+    <None Remove="Resources\Images\crisis-event-2.png" />
+    <None Remove="Resources\Images\crisis-event-3.png" />
+    <None Remove="Resources\Images\crisis-event-4.png" />
+    <None Remove="Resources\Images\crisis-event-5.png" />
+    <None Remove="Resources\Images\crisis-mid-1.png" />
+    <None Remove="Resources\Images\crisis-mid-2.png" />
+    <None Remove="Resources\Images\crisis-mid-3.png" />
+    <None Remove="Resources\Images\crisis-mid-4.png" />
+    <None Remove="Resources\Images\crisis-mid-5.png" />
+    <None Remove="Resources\Images\deck-blue.png" />
+    <None Remove="Resources\Images\deck-green.png" />
+    <None Remove="Resources\Images\deck-purple.png" />
+    <None Remove="Resources\Images\deck-red.png" />
+    <None Remove="Resources\Images\deck-yellow.png" />
+    <None Remove="Resources\Images\dg-human-1.png" />
+    <None Remove="Resources\Images\dg-human-10.png" />
+    <None Remove="Resources\Images\dg-human-11.png" />
+    <None Remove="Resources\Images\dg-human-12.png" />
+    <None Remove="Resources\Images\dg-human-13.png" />
+    <None Remove="Resources\Images\dg-human-2.png" />
+    <None Remove="Resources\Images\dg-human-3.png" />
+    <None Remove="Resources\Images\dg-human-4.png" />
+    <None Remove="Resources\Images\dg-human-5.png" />
+    <None Remove="Resources\Images\dg-human-6.png" />
+    <None Remove="Resources\Images\dg-human-7.png" />
+    <None Remove="Resources\Images\dg-human-8.png" />
+    <None Remove="Resources\Images\dg-human-9.png" />
+    <None Remove="Resources\Images\dg-monster-1.png" />
+    <None Remove="Resources\Images\dg-monster-10.png" />
+    <None Remove="Resources\Images\dg-monster-11.png" />
+    <None Remove="Resources\Images\dg-monster-12.png" />
+    <None Remove="Resources\Images\dg-monster-2.png" />
+    <None Remove="Resources\Images\dg-monster-3.png" />
+    <None Remove="Resources\Images\dg-monster-4.png" />
+    <None Remove="Resources\Images\dg-monster-5.png" />
+    <None Remove="Resources\Images\dg-monster-6.png" />
+    <None Remove="Resources\Images\dg-monster-7.png" />
+    <None Remove="Resources\Images\dg-monster-8.png" />
+    <None Remove="Resources\Images\dg-monster-9.png" />
+    <None Remove="Resources\Images\dg-obs-1.png" />
+    <None Remove="Resources\Images\dg-obs-10.png" />
+    <None Remove="Resources\Images\dg-obs-11.png" />
+    <None Remove="Resources\Images\dg-obs-12.png" />
+    <None Remove="Resources\Images\dg-obs-13.png" />
+    <None Remove="Resources\Images\dg-obs-14.png" />
+    <None Remove="Resources\Images\dg-obs-15.png" />
+    <None Remove="Resources\Images\dg-obs-2.png" />
+    <None Remove="Resources\Images\dg-obs-3.png" />
+    <None Remove="Resources\Images\dg-obs-4.png" />
+    <None Remove="Resources\Images\dg-obs-5.png" />
+    <None Remove="Resources\Images\dg-obs-6.png" />
+    <None Remove="Resources\Images\dg-obs-7.png" />
+    <None Remove="Resources\Images\dg-obs-8.png" />
+    <None Remove="Resources\Images\dg-obs-9.png" />
+    <None Remove="Resources\Images\job-arc.png" />
+    <None Remove="Resources\Images\job-baba.png" />
+    <None Remove="Resources\Images\job-glad.png" />
+    <None Remove="Resources\Images\job-hunter.png" />
+    <None Remove="Resources\Images\job-magi.png" />
+    <None Remove="Resources\Images\job-ninja.png" />
+    <None Remove="Resources\Images\job-pal.png" />
+    <None Remove="Resources\Images\job-pow.png" />
+    <None Remove="Resources\Images\job-thief.png" />
+    <None Remove="Resources\Images\job-val.png" />
+    <None Remove="Resources\Images\mainbox.png" />
+    <None Remove="Resources\Images\skill-bungi.png" />
+    <None Remove="Resources\Images\skill-cancel.png" />
+    <None Remove="Resources\Images\skill-chiyu.png" />
+    <None Remove="Resources\Images\skill-dk.png" />
+    <None Remove="Resources\Images\skill-doduk.png" />
+    <None Remove="Resources\Images\skill-doyak.png" />
+    <None Remove="Resources\Images\skill-fire.png" />
+    <None Remove="Resources\Images\skill-gangta.png" />
+    <None Remove="Resources\Images\skill-gibu.png" />
+    <None Remove="Resources\Images\skill-heal.png" />
+    <None Remove="Resources\Images\skill-jilju.png" />
+    <None Remove="Resources\Images\skill-magic.png" />
+    <None Remove="Resources\Images\skill-sniper.png" />
+    <None Remove="Resources\Images\skill-suho.png" />
+    <None Remove="Resources\Images\skill-suryutan.png" />
+    <None Remove="Resources\Images\skill-wildcard.png" />
+    <None Remove="Resources\Images\skill-yakcho.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Images\act-arrow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-arrow2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-jump.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-jump2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-scroll.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-scroll2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-shield.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-shield2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-sword.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-sword2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-swordarrow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-swordjump.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-swordscroll.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\act-swordshield.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\boss1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\boss2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\boss3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\boss4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\boss5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\card-crisis.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\card-monster.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-event-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-event-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-event-3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-event-4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-event-5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-mid-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-mid-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-mid-3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-mid-4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\crisis-mid-5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\deck-blue.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\deck-green.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\deck-purple.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\deck-red.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\deck-yellow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-11.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-13.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-7.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-human-9.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-11.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-7.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-monster-9.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-11.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-13.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-14.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-15.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-7.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\dg-obs-9.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-arc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-baba.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-glad.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-hunter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-magi.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-ninja.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-pal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-pow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-thief.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\job-val.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\mainbox.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-bungi.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-cancel.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-chiyu.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-dk.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-doduk.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-doyak.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-fire.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-gangta.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-gibu.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-heal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-jilju.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-magic.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-sniper.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-suho.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-suryutan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-wildcard.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\skill-yakcho.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

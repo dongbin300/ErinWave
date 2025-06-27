@@ -1,0 +1,33 @@
+﻿@page "/guessgame"
+
+<h3>숫자 맞추기 게임</h3>
+
+<p>1부터 10까지의 숫자를 맞춰보세요.</p>
+
+<input @bind="userGuess" type="number" min="1" max="10" />
+<button @onclick="CheckGuess">확인</button>
+
+<p>@resultMessage</p>
+
+@code {
+    int targetNumber;
+    int userGuess;
+    string resultMessage = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        targetNumber = new Random().Next(1, 11);
+    }
+
+    void CheckGuess()
+    {
+        if (userGuess == targetNumber)
+        {
+            resultMessage = "정답입니다!";
+        }
+        else
+        {
+            resultMessage = "다시 시도해 보세요.";
+        }
+    }
+}

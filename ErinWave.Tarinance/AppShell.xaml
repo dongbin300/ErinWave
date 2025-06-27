@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="ErinWave.Tarinance.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:ErinWave.Tarinance"
+    xmlns:views="clr-namespace:ErinWave.Tarinance.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Title="ErinWave.Tarinance">
+
+    <TabBar>
+        <Tab Title="거래소">
+            <ShellContent Title="리스트" ContentTemplate="{DataTemplate views:MarketListPage}" />
+            <ShellContent Title="박스" ContentTemplate="{DataTemplate local:MainPage}" />
+            <ShellContent Title="랭킹" ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+        <Tab Title="주문">
+            <ShellContent Title="주문" ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+        <Tab Title="채굴">
+            <ShellContent Title="없는숫자" ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+        <Tab Title="랭킹">
+            <ShellContent Title="주문" ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+        <Tab Title="MY">
+            <ShellContent Title="계좌" ContentTemplate="{DataTemplate local:MainPage}" />
+            <ShellContent Title="거래내역" ContentTemplate="{DataTemplate local:MainPage}" />
+            <ShellContent Title="수수료" ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+    </TabBar>
+
+</Shell>
