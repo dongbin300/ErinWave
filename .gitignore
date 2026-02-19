@@ -396,3 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/.claude
+/Coursera
+/ErinWave.GooglePlayPaymentsManager/payments.txt
+/ErinWave.GooglePlayPaymentsManager/debug_output.txt
+/ErinWave.GooglePlayPaymentsManager/console_output.txt
+/ErinWave.GooglePlayPaymentsManager/ErinWave.GooglePlayPaymentsManager.csproj
+/ErinWave.NeuroExpose/Resources/Songs
