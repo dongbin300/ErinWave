@@ -1,0 +1,76 @@
+<ui:FluentWindow x:Class="ErinWave.WebViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:local="clr-namespace:ErinWave.WebViewer"
+        mc:Ignorable="d"
+        Title="Bookmark Viewer" 
+        Height="800" 
+        Width="1200" 
+        WindowState="Maximized"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Bar -->
+        <ui:TitleBar Grid.Row="0" Title="Bookmark Viewer" CanMaximize="True"/>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="8,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Side Tab Panel -->
+            <Border Grid.Column="0" 
+                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                    CornerRadius="12"
+                    Margin="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <ui:Button x:Name="BookmarksButton" 
+                                   Width="48" Height="48" 
+                                   Padding="8" 
+                                   Click="BookmarksButton_Click" 
+                                   Background="Transparent" 
+                                   BorderBrush="Transparent" 
+                                   CornerRadius="12">
+                            <ui:SymbolIcon Symbol="Bookmark24"/>
+                        </ui:Button>
+                        <ui:Button x:Name="ClosePageButton" 
+                                   Width="48" Height="48" 
+                                   Padding="8" 
+                                   Background="{DynamicResource ControlFillColorDefaultBrush}" 
+                                   CornerRadius="8" 
+                                   Click="ClosePageButton_Click">
+                            <ui:SymbolIcon Symbol="Dismiss24"/>
+                        </ui:Button>
+                        <StackPanel x:Name="TabsPanel" Orientation="Vertical" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Content Area -->
+            <Border Grid.Column="1" 
+                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                    CornerRadius="12"
+                    Margin="4,0,0,0">
+                <Grid>
+                    <Grid x:Name="WebViewContainer" Panel.ZIndex="0">
+                        <!-- WebView2 instances will be added here dynamically -->
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

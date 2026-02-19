@@ -1,0 +1,140 @@
+﻿<Window x:Class="ErinWave.CourseraExtractor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ErinWave.CourseraExtractor"
+        mc:Ignorable="d"
+        Title="Coursera 강의 콘텐츠 추출기" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 헤더 -->
+        <Border Grid.Row="0" Background="#0056D2" Padding="20" CornerRadius="8" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="🎓" FontSize="32" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Coursera 강의 콘텐츠 추출기" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Coursera 강의의 한국어 자막과 다운로드 콘텐츠를 추출하는 도구" FontSize="14" Foreground="#E3F2FD" Margin="0,5,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- 입력 영역 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock Text="HTML 파일:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="FilePathTextBox" Height="40" FontSize="14" Padding="10"
+                             Text="D:\Project\CS\ErinWave\Coursera\1_2.txt"
+                             VerticalContentAlignment="Center" IsReadOnly="True"/>
+                    <Button Grid.Column="1" Content="파일 선택" Padding="15,8" Margin="10,0,0,0"
+                            Background="#607D8B" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                            Click="SelectFileButton_Click"/>
+                </Grid>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <Button x:Name="ExtractButton" Content="텍스트 추출" Padding="20,10" Margin="0,0,10,0"
+                        Background="#0056D2" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                        Click="ExtractButton_Click"/>
+                <Button x:Name="SaveButton" Content="저장" Padding="20,10" Margin="0,0,10,0"
+                        Background="#4CAF50" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                        Click="SaveButton_Click" IsEnabled="False"/>
+                <Button x:Name="ClearButton" Content="지우기" Padding="20,10"
+                        Background="#FF9800" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                        Click="ClearButton_Click"/>
+            </StackPanel>
+        </Grid>
+
+  
+        <!-- 결과 표시 -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 통계 정보 -->
+            <Border Grid.Row="0" Background="#E3F2FD" Padding="15" CornerRadius="5" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="총 콘텐츠 수" FontWeight="Bold" FontSize="12" Foreground="#1565C0"/>
+                        <TextBlock x:Name="TotalScriptsText" Text="0" FontSize="20" FontWeight="Bold" Foreground="#1565C0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="마지막 추출 시간" FontWeight="Bold" FontSize="12" Foreground="#1565C0"/>
+                        <TextBlock x:Name="LastExtractionTimeText" Text="-" FontSize="14" FontWeight="Bold" Foreground="#1565C0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="콘텐츠 유형" FontWeight="Bold" FontSize="12" Foreground="#1565C0"/>
+                        <TextBlock x:Name="ScriptTypesText" Text="-" FontSize="14" FontWeight="Bold" Foreground="#1565C0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 추출된 텍스트 -->
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button Content="전체 복사" Padding="15,8" Margin="0,0,10,0"
+                            Background="#607D8B" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                            Click="CopyAllButton_Click"/>
+                    <TextBlock Text="추출된 텍스트 (클릭하여 전체 선택)" VerticalAlignment="Center"
+                               FontSize="12" Foreground="#666" Margin="10,0,0,0"/>
+                </StackPanel>
+
+                <TextBox Grid.Row="1" x:Name="ExtractedTextTextBox"
+                         FontFamily="Malgun Gothic" FontSize="14"
+                         TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         Padding="15" BorderThickness="1" BorderBrush="#DDD"
+                         Background="#FAFAFA"
+                         AcceptsReturn="True" IsReadOnly="True"/>
+            </Grid>
+        </Grid>
+
+        <!-- 하단 정보 -->
+        <StatusBar Grid.Row="3" Background="#F0F0F0" Height="30">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" x:Name="FooterStatusText" Text="준비됨" VerticalAlignment="Center" Margin="10,0"/>
+                <ProgressBar x:Name="ProgressBar" Grid.Column="1" Width="150" Height="16" Margin="10,0,20,0"
+                             IsIndeterminate="True" Visibility="Collapsed"/>
+                <TextBlock Grid.Column="2" Text="ErinWave Coursera 콘텐츠 추출기 v1.0" VerticalAlignment="Center" Margin="10,0"/>
+            </Grid>
+        </StatusBar>
+    </Grid>
+</Window>

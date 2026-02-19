@@ -24,9 +24,9 @@
 //-----------------------------------------------------------------------
 using System.Security.Cryptography;
 
-namespace ErinWave.Maths
+namespace ErinWave.Math
 {
-	public class EWRandom
+	public class ErinWaveRandom
 	{
 		public long Seed { get; set; }
 
@@ -38,12 +38,12 @@ namespace ErinWave.Maths
 
 		private int _GetRandomInt() => RandomNumberGenerator.GetInt32(int.MaxValue);
 
-		public EWRandom()
+		public ErinWaveRandom()
 		{
 			Seed = _GetRandomInt() % 1337;
 		}
 
-		public EWRandom(long seed)
+		public ErinWaveRandom(long seed)
 		{
 			Seed = seed;
 		}
@@ -148,14 +148,14 @@ namespace ErinWave.Maths
 		{
 			double u1 = 1.0 - NextDouble();
 			double u2 = 1.0 - NextDouble();
-			double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+			double randStdNormal = System.Math.Sqrt(-2.0 * System.Math.Log(u1)) * System.Math.Sin(2.0 * System.Math.PI * u2);
 
 			double mean = (min + max) / 2.0;
 			double stddev = (max - min) / 6.0;
 
 			double randNormal = mean + stddev * randStdNormal;
 
-			return (int)Math.Round(Math.Clamp(randNormal, min, max));
+			return (int)System.Math.Round(System.Math.Clamp(randNormal, min, max));
 		}
 
 		/// <summary>
@@ -168,14 +168,14 @@ namespace ErinWave.Maths
 		{
 			double u1 = 1.0 - NextDouble();
 			double u2 = 1.0 - NextDouble();
-			double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+			double randStdNormal = System.Math.Sqrt(-2.0 * System.Math.Log(u1)) * System.Math.Sin(2.0 * System.Math.PI * u2);
 
 			double mean = (min + max) / 2.0;
 			double stddev = (max - min) / 6.0;
 
 			double randNormal = mean + stddev * randStdNormal;
 
-			return Math.Clamp(randNormal, min, max);
+			return System.Math.Clamp(randNormal, min, max);
 		}
 
 		/// <summary>
@@ -188,14 +188,14 @@ namespace ErinWave.Maths
 		{
 			double u1 = 1.0 - NextDouble();
 			double u2 = 1.0 - NextDouble();
-			double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+			double randStdNormal = System.Math.Sqrt(-2.0 * System.Math.Log(u1)) * System.Math.Sin(2.0 * System.Math.PI * u2);
 
 			decimal mean = (min + max) / 2;
 			decimal stddev = (max - min) / 6;
 
 			decimal randNormal = mean + stddev * (decimal)randStdNormal;
 
-			return Math.Clamp(randNormal, min, max);
+			return System.Math.Clamp(randNormal, min, max);
 		}
 	}
 }

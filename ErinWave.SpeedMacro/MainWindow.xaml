@@ -94,9 +94,9 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="KeyTextBox" Grid.Column="0" PreviewKeyDown="KeyTextBox_PreviewKeyDown"/>
-                        <Button x:Name="PressButton" Grid.Column="1" Click="PressButton_Click">입력</Button>
-                        <CheckBox x:Name="FastInputCheckBox" Grid.Column="2" Checked="FastInputCheckBox_Checked" Unchecked="FastInputCheckBox_Unchecked">빠른 입력</CheckBox>
+                        <TextBox x:Name="KeyTextBox" Grid.Column="0" Grid.ColumnSpan="2" PreviewKeyDown="KeyTextBox_PreviewKeyDown"/>
+                        <Button x:Name="PressButton" Grid.Column="2" Click="PressButton_Click">입력</Button>
+                        <CheckBox x:Name="FastInputCheckBox" Grid.Column="3" Checked="FastInputCheckBox_Checked" Unchecked="FastInputCheckBox_Unchecked">빠른 입력</CheckBox>
                     </Grid>
                 </GroupBox>
 

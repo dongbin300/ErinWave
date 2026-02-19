@@ -1,0 +1,333 @@
+<Window x:Class="ErinWave.OsuSkinManager.ImageEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ErinWave 이미지 편집기" Height="800" Width="1200"
+        Background="#FF0D1117" MinHeight="600" MinWidth="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Global Color Palette -->
+        <SolidColorBrush x:Key="PrimaryBackground" Color="#FF0D1117"/>
+        <SolidColorBrush x:Key="CardBackground" Color="#FF161B22"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#FF30363D"/>
+        <SolidColorBrush x:Key="AccentBlue" Color="#FF0969DA"/>
+        <SolidColorBrush x:Key="AccentGreen" Color="#FF3FB950"/>
+        <SolidColorBrush x:Key="AccentOrange" Color="#FFFB8500"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#FFF0F6FC"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#FF8B949E"/>
+        <SolidColorBrush x:Key="TextMuted" Color="#FF484F58"/>
+
+        <!-- 버튼 스타일 -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF1F6EB7"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF1654A6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF1C2128"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF262C36"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Card 스타일 -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="24"/>
+        </Style>
+
+        <!-- Header Text 스타일 -->
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        </Style>
+
+        <!-- Subheader Text 스타일 -->
+        <Style x:Key="SubheaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+        </Style>
+
+        <!-- Body Text 스타일 -->
+        <Style x:Key="BodyTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        </Style>
+
+        <!-- Muted Text 스타일 -->
+        <Style x:Key="MutedTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 상단 헤더 -->
+        <Border Grid.Row="0" Height="72" Background="{StaticResource CardBackground}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid Margin="24,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 왼쪽: 제목 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="32" Height="32" Fill="{StaticResource AccentOrange}" Margin="0,0,16,0"/>
+                    <StackPanel>
+                        <TextBlock Text="osu! 스킨 이미지 편집기"
+                                  Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Text="게임 모드별 스킨 요소를 손쉽게 편집하세요"
+                                  Style="{StaticResource SubheaderTextStyle}" FontSize="12"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 오른쪽: 작업 버튼 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
+                          HorizontalAlignment="Right">
+                    <Button Style="{StaticResource SecondaryButtonStyle}"
+                           Name="OpenFolderButton" Content="📁 폴더 열기"
+                           Click="OpenFolderButton_Click"/>
+                    <Button Style="{StaticResource SecondaryButtonStyle}"
+                           Name="SaveAllButton" Content="💾 모두 저장"
+                           Click="SaveAllButton_Click"/>
+                    <Button Style="{StaticResource PrimaryButtonStyle}"
+                           Name="ExitButton" Content="✅ 완료"
+                           Click="ExitButton_Click" Margin="16,0,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 메인 에디터 영역 -->
+        <Grid Grid.Row="1" Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 게임 모드 선택 -->
+            <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 왼쪽: 제목 -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Fill="{StaticResource AccentOrange}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <TextBlock Text="게임 모드 선택" Style="{StaticResource HeaderTextStyle}" FontSize="16"/>
+                    </StackPanel>
+
+                    <!-- 오른쪽: 모드 선택 버튼 -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Name="StandardModeButton" Content="🎯 Standard" Style="{StaticResource SecondaryButtonStyle}"
+                               Click="ModeButton_Click" Tag="Standard" Margin="0,0,12,0"/>
+                        <Button Name="TaikoModeButton" Content="🥁 Taiko" Style="{StaticResource SecondaryButtonStyle}"
+                               Click="ModeButton_Click" Tag="Taiko" Margin="0,0,12,0"/>
+                        <Button Name="CatchModeButton" Content="🍎 Catch" Style="{StaticResource SecondaryButtonStyle}"
+                               Click="ModeButton_Click" Tag="Catch" Margin="0,0,12,0"/>
+                        <Button Name="ManiaModeButton" Content="🎹 Mania" Style="{StaticResource SecondaryButtonStyle}"
+                               Click="ModeButton_Click" Tag="Mania"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 이미지 목록 및 편집 영역 -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="320"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 왼쪽: 이미지 목록 -->
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="16"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="16"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 제목 -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="{StaticResource AccentBlue}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <TextBlock Text="이미지 목록" Style="{StaticResource HeaderTextStyle}" FontSize="14"/>
+                        </StackPanel>
+
+                        <!-- 검색 -->
+                        <Border Grid.Row="2" Background="{StaticResource PrimaryBackground}"
+                               BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="🔍" Style="{StaticResource MutedTextStyle}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBox Grid.Column="1" Name="ImageSearchTextBox"
+                                         Background="Transparent" BorderThickness="0"
+                                         FontSize="14" FontWeight="Medium"
+                                         Foreground="{StaticResource TextPrimary}"
+                                         TextChanged="ImageSearchTextBox_TextChanged"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- 이미지 목록 -->
+                        <ListBox Grid.Row="4" Name="ImageListBox"
+                                 Background="Transparent" BorderThickness="0"
+                                 SelectionMode="Single" SelectionChanged="ImageListBox_SelectionChanged"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="12,8" CornerRadius="4" Background="Transparent" Margin="0,2">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Rectangle Grid.Column="0" Width="32" Height="32"
+                                                      Fill="{StaticResource CardBackground}"
+                                                      Stroke="{StaticResource BorderBrush}" StrokeThickness="1"
+                                                      RadiusX="4" RadiusY="4" Margin="0,0,12,0"/>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" Style="{StaticResource BodyTextStyle}" FontWeight="Medium"/>
+                                                <TextBlock Text="{Binding Description}" Style="{StaticResource SubheaderTextStyle}" FontSize="12"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+
+                <!-- 오른쪽: 편집 영역 -->
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="24"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 상단: 이미지 정보 -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="{StaticResource AccentGreen}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <TextBlock Name="SelectedImageTitle" Text="이미지를 선택하세요" Style="{StaticResource HeaderTextStyle}" FontSize="14"/>
+                        </StackPanel>
+
+                        <!-- 편집 캔버스 -->
+                        <Border Grid.Row="2" Background="{StaticResource PrimaryBackground}"
+                               BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8"
+                               MinHeight="300">
+                            <Grid>
+                                <Canvas Name="ImageEditCanvas" Background="Transparent"/>
+
+                                <!-- 이미지가 없을 때 메시지 -->
+                                <TextBlock Name="NoImageMessage" Text="왼쪽에서 이미지를 선택하세요"
+                                         Style="{StaticResource MutedTextStyle}"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                                         FontSize="16"/>
+
+                                <!-- 이미지 미리보기 -->
+                                <Image Name="PreviewImage" Stretch="Uniform" Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- 하단 상태 표시줄 -->
+        <Border Grid.Row="2" Height="48" Background="{StaticResource CardBackground}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+            <Grid Margin="24,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 왼쪽: 상태 메시지 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentOrange}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <TextBlock Name="StatusTextBlock" Text="준비"
+                             Style="{StaticResource SubheaderTextStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 오른쪽: 정보 텍스트 -->
+                <TextBlock Grid.Column="1" Text="이미지 편집기 v1.0"
+                         Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Right"
+                         VerticalAlignment="Center" Opacity="0.7"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

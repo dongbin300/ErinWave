@@ -7,14 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Imaging\" />
-    <Folder Include="Windows\" />
-    <Folder Include="Serialization\" />
+    <PackageReference Include="Raylib-cs" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.10" />
+    <ProjectReference Include="..\ErinWave\ErinWave.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,344 @@
+<Window x:Class="ErinWave.GooglePlayPaymentsManager.OptimizedStatisticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ErinWave.GooglePlayPaymentsManager"
+        mc:Ignorable="d"
+        Title="결제 통계" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 헤더 -->
+        <Border Grid.Row="0" Background="#4285F4" Padding="20" CornerRadius="8" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="📊" FontSize="32" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Google Play 결제 통계" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock x:Name="PeriodText" Text="기간: 계산 중..." FontSize="14" Foreground="#E8F0FE" Margin="0,5,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- 요약 정보 -->
+        <Border Grid.Row="1" Background="#F8F9FA" Padding="20" CornerRadius="8" Margin="0,0,0,15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="총 지출액" FontWeight="Bold" FontSize="12" Foreground="#5F6368"/>
+                    <TextBlock x:Name="TotalSpentText" Text="₩0" FontSize="18" FontWeight="Bold" Foreground="#EA4335"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="거래 횟수" FontWeight="Bold" FontSize="12" Foreground="#5F6368"/>
+                    <TextBlock x:Name="TransactionCountText" Text="0회" FontSize="18" FontWeight="Bold" Foreground="#4285F4"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="평균 결제액" FontWeight="Bold" FontSize="12" Foreground="#5F6368"/>
+                    <TextBlock x:Name="AverageAmountText" Text="₩0" FontSize="18" FontWeight="Bold" Foreground="#34A853"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="3">
+                    <TextBlock Text="가장 많이 소비한 달" FontWeight="Bold" FontSize="12" Foreground="#5F6368"/>
+                    <TextBlock x:Name="MostExpensiveMonthText" Text="계산 중..." FontSize="14" FontWeight="Bold" Foreground="#FBBC04"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="4">
+                    <TextBlock Text="가장 많이 소비한 날" FontWeight="Bold" FontSize="12" Foreground="#5F6368"/>
+                    <TextBlock x:Name="MostExpensiveDayText" Text="계산 중..." FontSize="14" FontWeight="Bold" Foreground="#FBBC04"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 추가 요약 정보 (게임별) -->
+        <Border Grid.Row="1" Background="#F3E5F5" Padding="15" CornerRadius="8" Margin="0,80,0,15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="🎮" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <StackPanel>
+                    <TextBlock Text="가장 많이 소비한 게임" FontWeight="Bold" FontSize="12" Foreground="#5F6368"/>
+                    <TextBlock x:Name="MostSpentGameText" Text="계산 중..." FontSize="16" FontWeight="Bold" Foreground="#9C27B0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- 로딩 인디케이터 -->
+        <Grid Grid.Row="2" x:Name="LoadingPanel" Background="White" Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="300" Height="20" Margin="0,0,0,15"
+                             Foreground="#4285F4" Background="#E8F0FE"/>
+                <TextBlock Text="통계 데이터 계산 중..." HorizontalAlignment="Center"
+                           FontSize="16" FontWeight="Bold" Foreground="#5F6368"/>
+                <TextBlock x:Name="LoadingStatusText" Text="0% 완료" HorizontalAlignment="Center"
+                           FontSize="14" Foreground="#80868B" Margin="0,5,0,0"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 탭과 내용 -->
+        <TabControl Grid.Row="2" x:Name="StatisticsTabControl" Background="Transparent">
+            <!-- 일별 통계 -->
+            <TabItem Header="일별 통계" FontSize="14" FontWeight="Bold">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="날짜별 지출 현황" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button x:Name="RefreshDailyButton" Content="새로고침" Margin="20,0,0,0" Padding="10,5"
+                                Background="#4285F4" Foreground="White" BorderThickness="0" Click="RefreshDailyButton_Click"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="DailyStatisticsGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E0E0E0"
+                              AlternatingRowBackground="#F8F9FA"
+                              FontSize="12">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="날짜" Binding="{Binding Date}" Width="120" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="거래 횟수" Binding="{Binding TransactionCount}" Width="100" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="총액" Binding="{Binding FormattedTotal}" Width="120" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#EA4335"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="평균" Binding="{Binding FormattedAverage}" Width="120" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#34A853"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- 월별 통계 -->
+            <TabItem Header="월별 통계" FontSize="14" FontWeight="Bold">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="월별 지출 현황" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button x:Name="RefreshMonthlyButton" Content="새로고침" Margin="20,0,0,0" Padding="10,5"
+                                Background="#4285F4" Foreground="White" BorderThickness="0" Click="RefreshMonthlyButton_Click"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="MonthlyStatisticsGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E0E0E0"
+                              AlternatingRowBackground="#F8F9FA"
+                              FontSize="12">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="년월" Binding="{Binding DisplayText}" Width="150" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="거래 횟수" Binding="{Binding TransactionCount}" Width="100" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="총액" Binding="{Binding FormattedTotal}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#EA4335"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="평균" Binding="{Binding FormattedAverage}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#34A853"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- 연별 통계 -->
+            <TabItem Header="연별 통계" FontSize="14" FontWeight="Bold">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="연간 지출 현황" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button x:Name="RefreshYearlyButton" Content="새로고침" Margin="20,0,0,0" Padding="10,5"
+                                Background="#4285F4" Foreground="White" BorderThickness="0" Click="RefreshYearlyButton_Click"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="YearlyStatisticsGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E0E0E0"
+                              AlternatingRowBackground="#F8F9FA"
+                              FontSize="12">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="연도" Binding="{Binding Year}" Width="100" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="거래 횟수" Binding="{Binding TransactionCount}" Width="120" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="총액" Binding="{Binding FormattedTotal}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#EA4335"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="평균" Binding="{Binding FormattedAverage}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#34A853"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="월평균" Binding="{Binding FormattedMonthlyAverage}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#FBBC04"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- 게임별 통계 -->
+            <TabItem Header="🎮 게임별 통계" FontSize="14" FontWeight="Bold">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="게임별 지출 현황" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button x:Name="RefreshGameButton" Content="새로고침" Margin="20,0,0,0" Padding="10,5"
+                                Background="#9C27B0" Foreground="White" BorderThickness="0" Click="RefreshGameButton_Click"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="GameStatisticsGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E0E0E0"
+                              AlternatingRowBackground="#F8F9FA"
+                              FontSize="12">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="게임명" Binding="{Binding GameName}" Width="300" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="거래 횟수" Binding="{Binding TransactionCount}" Width="100" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="총액" Binding="{Binding FormattedTotal}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#EA4335"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="평균" Binding="{Binding FormattedAverage}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#34A853"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="비율" Binding="{Binding FormattedPercentage}" Width="100" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#9C27B0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- 하단 버튼 -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button x:Name="ExportButton" Content="내보내기" Padding="15,8" Margin="0,0,10,0"
+                    Background="#34A853" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                    Click="ExportButton_Click"/>
+            <Button x:Name="CloseButton" Content="닫기" Padding="15,8"
+                    Background="#5F6368" Foreground="White" BorderThickness="0" FontWeight="Bold"
+                    Click="CloseButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
