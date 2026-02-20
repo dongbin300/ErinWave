@@ -1,5 +1,8 @@
-﻿using ErinWave.Frame.Raylibs.Systems;
+﻿using ErinWave.Frame.Raylibs;
+using ErinWave.Frame.Raylibs.Systems;
+using ErinWave.Pihagi.Core.States;
 using ErinWave.Pihagi.Entities;
+using ErinWave.Frame.Raylibs.Enums;
 
 using Raylib_cs;
 
@@ -17,6 +20,7 @@ namespace ErinWave.Pihagi.Core
 		public SpawnSystem<Bullet> spawnSystem;
 
 		private int score = 0;
+		private GameState state = GameState.Playing;
 
 		public Game()
 		{
@@ -32,6 +36,22 @@ namespace ErinWave.Pihagi.Core
 		{
 			float delta = Raylib.GetFrameTime();
 
+			if (state == GameState.Playing)
+			{
+				UpdatePlaying(delta);
+			}
+			else if (state == GameState.GameOver)
+			{
+				if (Raylib.IsKeyDown(KeyboardKey.Enter))
+				{
+					Reset();
+					state = GameState.Playing;
+				}
+			}
+		}
+
+		private void UpdatePlaying(float delta)
+		{
 			// Movement
 			movementSystem.Update(player, delta);
 
@@ -41,7 +61,7 @@ namespace ErinWave.Pihagi.Core
 			{
 				if (collisionSystem.CheckCollision(player, bullet))
 				{
-					GameOver();
+					state = GameState.GameOver;
 					return;
 				}
 			}
@@ -70,16 +90,27 @@ namespace ErinWave.Pihagi.Core
 		public void Render()
 		{
 			player.Render();
-
 			foreach (var bullet in bullets)
 				bullet.Render();
 
-			Raylib.DrawText($"{score}", 10, 10, 20, Color.LightGray);
+			Raylib.DrawText($"{score}", 10, 10, 20, Color.White);
+
+			if (state == GameState.GameOver)
+			{
+				RenderGameOverUI();
+			}
 		}
 
-		private void GameOver()
+		private void RenderGameOverUI()
 		{
-			Reset();
+			string text1 = "GAME OVER";
+			string text2 = "Press ENTER to Restart";
+
+			int screenWidth = Raylib.GetScreenWidth();
+			int screenHeight = Raylib.GetScreenHeight();
+
+			RaylibHelper.DrawTextAligned(text1, screenWidth / 2, screenHeight / 2, 40, Color.Red, HorizontalAlignment.Center);
+			RaylibHelper.DrawTextAligned(text2, screenWidth / 2, screenHeight / 2 + 40, 16, Color.White, HorizontalAlignment.Center);
 		}
 
 		private void Reset()
