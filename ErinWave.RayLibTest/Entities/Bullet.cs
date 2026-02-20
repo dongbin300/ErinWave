@@ -9,7 +9,7 @@ namespace ErinWave.RayLibTest.Entities
 	{
 		public Bullet()
 		{
-			Color = Color.Beige;
+			Color = Color.DarkGray;
 			Radius = 4f;
 			Velocity = new(0, 250f);
 

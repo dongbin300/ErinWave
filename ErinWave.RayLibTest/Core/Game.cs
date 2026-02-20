@@ -3,7 +3,6 @@ using ErinWave.RayLibTest.Entities;
 
 using Raylib_cs;
 
-using System.Dynamic;
 using System.Numerics;
 
 namespace ErinWave.RayLibTest.Core
@@ -15,10 +14,12 @@ namespace ErinWave.RayLibTest.Core
 
 		public MovementSystem movementSystem = new();
 		public CollisionSystem collisionSystem = new();
+		public SpawnSystem<Bullet> spawnSystem;
 
-		public float spawnTimer;
-		public float spawnInterval;
-		public int spawnPadding = 5;
+		public Game()
+		{
+			spawnSystem = CreateSpawnSystem();
+		}
 
 		public void Initialize()
 		{
@@ -29,31 +30,26 @@ namespace ErinWave.RayLibTest.Core
 		{
 			float delta = Raylib.GetFrameTime();
 
+			// Movement
 			movementSystem.Update(player, delta);
-			collisionSystem.ClampToScreen(player);
 
+			// Collision
+			collisionSystem.ClampToScreen(player);
 			foreach (var bullet in bullets)
 			{
 				if (collisionSystem.CheckCollision(player, bullet))
 				{
 					GameOver();
-					break;
+					return;
 				}
 			}
 
-			spawnInterval = MathF.Max(0.05f, spawnInterval - delta * 0.01f);
-			spawnTimer += delta;
+			// Spawn
+			var newBullet = spawnSystem.Update(delta);
+			if (newBullet != null)
+				bullets.Add(newBullet);
 
-			if (spawnTimer >= spawnInterval)
-			{
-				spawnTimer = 0f;
-
-				bullets.Add(new Bullet
-				{
-					Position = new Vector2(Raylib.GetRandomValue(spawnPadding, Raylib.GetScreenWidth() - spawnPadding), -10)
-				});
-			}
-
+			// Bullet Update
 			foreach (var bullet in bullets)
 			{
 				if (!bullet.IsActive) continue;
@@ -63,17 +59,15 @@ namespace ErinWave.RayLibTest.Core
 				if (bullet.Position.Y > Raylib.GetScreenHeight() + 10)
 					bullet.IsActive = false;
 			}
-
 			bullets.RemoveAll(b => !b.IsActive);
 		}
 
 		public void Render()
 		{
 			player.Render();
+
 			foreach (var bullet in bullets)
-			{
 				bullet.Render();
-			}
 		}
 
 		private void GameOver()
@@ -85,8 +79,23 @@ namespace ErinWave.RayLibTest.Core
 		{
 			bullets.Clear();
 			player = new Player();
-			spawnTimer = 0f;
-			spawnInterval = 0.2f;
+			spawnSystem = CreateSpawnSystem();
+		}
+
+		private SpawnSystem<Bullet> CreateSpawnSystem()
+		{
+			return new SpawnSystem<Bullet>(
+				time => MathF.Max(0.05f, 0.2f - time * 0.01f), // 시간에 따라 감소
+				() =>
+				{
+					return new Bullet
+					{
+						Position = new Vector2(
+							Raylib.GetRandomValue(5, Raylib.GetScreenWidth() - 5),
+							-10
+						)
+					};
+				});
 		}
 	}
 }
