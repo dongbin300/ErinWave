@@ -19,13 +19,15 @@ namespace ErinWave.Pihagi.Scenes
 		private readonly GameContext _context;
 
 		// Entities
-		private Player player = new();
-		private List<Bullet> bullets = [];
+		private Player _player = new();
+		private List<Bullet> _bullets = [];
+		private List<MedkitItem> _medkits = [];
 
 		// Systems
-		private MovementSystem movementSystem = new();
-		private CollisionSystem collisionSystem = new();
-		private SpawnSystem<Bullet> spawnSystem;
+		private MovementSystem _movementSystem = new();
+		private CollisionSystem _collisionSystem = new();
+		private SpawnSystem<Bullet> _spawnSystem;
+		private SpawnSystem<MedkitItem> _medkitSpawnSystem;
 
 		// Effects
 		private CameraShake _shake = new();
@@ -38,7 +40,8 @@ namespace ErinWave.Pihagi.Scenes
 			_sceneManager = manager;
 			_context = context;
 
-			spawnSystem = CreateSpawnSystem();
+			_spawnSystem = CreateSpawnSystem();
+			_medkitSpawnSystem = CreateMedkitSpawnSystem();
 		}
 
 		public void Enter()
@@ -51,17 +54,17 @@ namespace ErinWave.Pihagi.Scenes
 		public void Update(float dt)
 		{
 			// Movement
-			movementSystem.Update(player, dt);
-			collisionSystem.ClampToScreen(player);
+			_movementSystem.Update(_player, dt);
+			_collisionSystem.ClampToScreen(_player);
 
 			// Collision
-			foreach (var bullet in bullets)
+			foreach (var bullet in _bullets)
 			{
-				if (collisionSystem.CheckCollision(player, bullet)) // Player hit
+				if (_collisionSystem.CheckCollision(_player, bullet)) // Player hit
 				{
 					_shake.Start(0.3f, 8f);
 
-					var playerHp = player.Stats.Get(StatType.HP);
+					var playerHp = _player.Stats.Get(StatType.HP);
 					playerHp.Decrease(12);
 					bullet.IsActive = false;
 
@@ -72,14 +75,29 @@ namespace ErinWave.Pihagi.Scenes
 					}
 				}
 			}
+			foreach (var medkit in _medkits)
+			{
+				if (!medkit.IsActive) continue;
+
+				if (_collisionSystem.CheckCollision(_player, medkit)) // Get Medkit
+				{
+					var playerHp = _player.Stats.Get(StatType.HP);
+					playerHp.Increase(50);
+					medkit.IsActive = false;
+				}
+			}
 
 			// Spawn
-			var newBullet = spawnSystem.Update(dt);
+			var newBullet = _spawnSystem.Update(dt);
 			if (newBullet != null)
-				bullets.Add(newBullet);
+				_bullets.Add(newBullet);
 
-			// Bullet Update
-			foreach (var bullet in bullets)
+			var newMedkit = _medkitSpawnSystem.Update(dt);
+			if (newMedkit != null)
+				_medkits.Add(newMedkit);
+
+			// Entity
+			foreach (var bullet in _bullets)
 			{
 				if (!bullet.IsActive) continue;
 
@@ -98,8 +116,11 @@ namespace ErinWave.Pihagi.Scenes
 					});
 				}
 			}
+			_bullets.RemoveAll(b => !b.IsActive);
 
-			bullets.RemoveAll(b => !b.IsActive);
+			foreach (var medkit in _medkits)
+				medkit.Update(dt);
+			_medkits.RemoveAll(m => !m.IsActive);
 
 			// Effects
 			_shake.Update(dt);
@@ -115,20 +136,22 @@ namespace ErinWave.Pihagi.Scenes
 		{
 			Raylib.BeginMode2D(new Camera2D(_shake.Offset, Vector2.Zero, 0, 1));
 
-			// Bullets
-			foreach (var bullet in bullets)
+			// Entity
+			foreach (var bullet in _bullets)
 				bullet.Render();
+			foreach (var medkit in _medkits)
+				medkit.Render();
 
 			// UI
 			Raylib.DrawText($"{_context.Score}", 10, 10, 20, Color.White);
 
 			// Player
-			player.Render();
-			int width = (int)player.Size.X * 2;
+			_player.Render();
+			int width = (int)_player.Size.X * 2;
 			int height = 6;
-			int x = (int)(player.Position.X - player.Size.X / 2);
-			int y = (int)player.Position.Y - 10;
-			var playerHp = player.Stats.Get(StatType.HP);
+			int x = (int)(_player.Position.X - _player.Size.X / 2);
+			int y = (int)_player.Position.Y - 10;
+			var playerHp = _player.Stats.Get(StatType.HP);
 			float ratio = playerHp.Ratio;
 			Raylib.DrawRectangle(x, y, width, height, Color.DarkGray);
 			Raylib.DrawRectangle(x, y, (int)(width * ratio), height, Color.Red);
@@ -142,10 +165,10 @@ namespace ErinWave.Pihagi.Scenes
 
 		private void Reset()
 		{
-			bullets.Clear();
-			player = new Player();
+			_bullets.Clear();
+			_player = new Player();
 			_context.Score = 0;
-			spawnSystem = CreateSpawnSystem();
+			_spawnSystem = CreateSpawnSystem();
 		}
 
 		private SpawnSystem<Bullet> CreateSpawnSystem()
@@ -161,6 +184,21 @@ namespace ErinWave.Pihagi.Scenes
 							-10
 						)
 					};
+				});
+		}
+
+		private SpawnSystem<MedkitItem> CreateMedkitSpawnSystem()
+		{
+			return new SpawnSystem<MedkitItem>(
+				time => 1.5f, // n초마다 체크
+				() =>
+				{
+					if (Raylib.GetRandomValue(0, 100) >= 36) // n%확률
+						return default!;
+
+					float x = Raylib.GetRandomValue(10, Raylib.GetScreenWidth() - 10);
+
+					return new MedkitItem(new Vector2(x, -20));
 				});
 		}
 	}
