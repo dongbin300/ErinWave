@@ -3,7 +3,8 @@ using ErinWave.Frame.Raylibs.Physics;
 
 using Raylib_cs;
 
-namespace ErinWave.RayLibTest.Entities
+
+namespace ErinWave.Pihagi.Entities
 {
 	public class Bullet : CircleEntity
 	{

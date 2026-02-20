@@ -1,11 +1,11 @@
 ﻿using ErinWave.Frame.Raylibs.Systems;
-using ErinWave.RayLibTest.Entities;
+using ErinWave.Pihagi.Entities;
 
 using Raylib_cs;
 
 using System.Numerics;
 
-namespace ErinWave.RayLibTest.Core
+namespace ErinWave.Pihagi.Core
 {
 	public class Game
 	{
