@@ -19,66 +19,42 @@ namespace ErinWave.Frame.Raylibs
 		#endregion
 
 		#region Text
-		public static void DrawTextAligned(string text, float x, float y, int fontSize, Color color, HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left, VerticalAlignment verticalAlignment = VerticalAlignment.Top)
+		public static void DrawTextAligned(string text, float x, float y, int fontSize, Color color, Anchor anchor = Anchor.TopLeft)
 		{
-			int textWidth = Raylib.MeasureText(text, fontSize);
-			int textHeight = fontSize;
+			int w = Raylib.MeasureText(text, fontSize);
+			int h = fontSize;
 
-			switch (horizontalAlignment)
+			switch (anchor)
 			{
-				case HorizontalAlignment.Center: x -= textWidth / 2f; break;
-				case HorizontalAlignment.Right: x -= textWidth; break;
-			}
-
-			switch (verticalAlignment)
-			{
-				case VerticalAlignment.Middle: y -= textHeight / 2f; break;
-				case VerticalAlignment.Bottom: y -= textHeight; break;
+				case Anchor.TopCenter: x -= w / 2f; break;
+				case Anchor.TopRight: x -= w; break;
+				case Anchor.MiddleLeft: y -= h / 2f; break;
+				case Anchor.Center: x -= w / 2f; y -= h / 2f; break;
+				case Anchor.MiddleRight: x -= w; y -= h / 2f; break;
+				case Anchor.BottomLeft: y -= h; break;
+				case Anchor.BottomCenter: x -= w / 2f; y -= h; break;
+				case Anchor.BottomRight: x -= w; y -= h; break;
 			}
 
 			Raylib.DrawText(text, (int)x, (int)y, fontSize, color);
 		}
 
-		public static void DrawTextAligned(string text, Rectangle bounds, int fontSize, Color color, HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left, VerticalAlignment verticalAlignment = VerticalAlignment.Top)
-		{
-			int textWidth = Raylib.MeasureText(text, fontSize);
-			int textHeight = fontSize;
-
-			float x = bounds.X;
-			float y = bounds.Y;
-
-			switch (horizontalAlignment)
-			{
-				case HorizontalAlignment.Center: x += (bounds.Width - textWidth) / 2f; break;
-				case HorizontalAlignment.Right: x += bounds.Width - textWidth; break;
-			}
-
-			switch (verticalAlignment)
-			{
-				case VerticalAlignment.Middle: y += (bounds.Height - textHeight) / 2f; break;
-				case VerticalAlignment.Bottom: y += bounds.Height - textHeight; break;
-			}
-
-			Raylib.DrawText(text, (int)x, (int)y, fontSize, color);
-		}
-
-		public static void DrawTextAligned(Font font, string text, Rectangle bounds, float fontSize, float spacing, Color color, HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left, VerticalAlignment verticalAlignment = VerticalAlignment.Top)
+		public static void DrawTextAligned(string text, float x, float y, Font font, int fontSize, float spacing, Color color, Anchor anchor = Anchor.TopLeft)
 		{
 			Vector2 size = Raylib.MeasureTextEx(font, text, fontSize, spacing);
+			float w = size.X;
+			float h = size.Y;
 
-			float x = bounds.X;
-			float y = bounds.Y;
-
-			switch (horizontalAlignment)
+			switch (anchor)
 			{
-				case HorizontalAlignment.Center: x += (bounds.Width - size.X) / 2f; break;
-				case HorizontalAlignment.Right: x += bounds.Width - size.X; break;
-			}
-
-			switch (verticalAlignment)
-			{
-				case VerticalAlignment.Middle: y += (bounds.Height - size.Y) / 2f; break;
-				case VerticalAlignment.Bottom: y += bounds.Height - size.Y; break;
+				case Anchor.TopCenter: x -= w / 2f; break;
+				case Anchor.TopRight: x -= w; break;
+				case Anchor.MiddleLeft: y -= h / 2f; break;
+				case Anchor.Center: x -= w / 2f; y -= h / 2f; break;
+				case Anchor.MiddleRight: x -= w; y -= h / 2f; break;
+				case Anchor.BottomLeft: y -= h; break;
+				case Anchor.BottomCenter: x -= w / 2f; y -= h; break;
+				case Anchor.BottomRight: x -= w; y -= h; break;
 			}
 
 			Raylib.DrawTextEx(font, text, new Vector2(x, y), fontSize, spacing, color);

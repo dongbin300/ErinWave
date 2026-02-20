@@ -1,5 +1,7 @@
 ﻿using ErinWave.Frame.Raylibs;
+using ErinWave.Frame.Raylibs.Scenes;
 using ErinWave.Pihagi.Core;
+using ErinWave.Pihagi.Scenes;
 
 using Raylib_cs;
 
@@ -19,18 +21,22 @@ namespace ErinWave.Pihagi
 			//string fontPath = @"C:\Users\Gaten\AppData\Local\Microsoft\Windows\Fonts\NanumBarunGothic.ttf";
 			//var font = KoreanFontHelper.LoadFont(fontPath, 16);
 
-			var game = new Game();
-			game.Initialize();
+			var sceneManager = new SceneManager();
+			var context = new GameContext();
+
+			sceneManager.ChangeScene(new GameplayScene(sceneManager, context));
 
 			while (!Raylib.WindowShouldClose())
 			{
-				game.Update();
+				float dt = Raylib.GetFrameTime();
+
+				sceneManager.Update(dt);
 
 				// --- Texture Rendering ---
 				Raylib.BeginTextureMode(sceneTexture);
 				Raylib.ClearBackground(Color.Blank);
 
-				game.Render();
+				sceneManager.Render();
 
 				Raylib.EndTextureMode();
 				// --- End of Texture Rendering ---
@@ -39,6 +45,7 @@ namespace ErinWave.Pihagi
 				Raylib.BeginDrawing();
 				Raylib.ClearBackground(Color.Blank);
 
+				// Global Transparency
 				var tint = new Color(255, 255, 255, 70);
 
 				Raylib.DrawTexturePro(
