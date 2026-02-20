@@ -1,4 +1,7 @@
-﻿using ErinWave.Frame.Raylibs.Scenes;
+﻿using ErinWave.Frame.Raylibs.Effects;
+using ErinWave.Frame.Raylibs.Enums;
+using ErinWave.Frame.Raylibs.Overlays;
+using ErinWave.Frame.Raylibs.Scenes;
 using ErinWave.Frame.Raylibs.Systems;
 using ErinWave.Pihagi.Core;
 using ErinWave.Pihagi.Entities;
@@ -14,12 +17,20 @@ namespace ErinWave.Pihagi.Scenes
 		private readonly SceneManager _sceneManager;
 		private readonly GameContext _context;
 
+		// Entities
 		private Player player = new();
 		private List<Bullet> bullets = [];
 
+		// Systems
 		private MovementSystem movementSystem = new();
 		private CollisionSystem collisionSystem = new();
 		private SpawnSystem<Bullet> spawnSystem;
+
+		// Effects
+		private CameraShake _shake = new();
+
+		// Overlays
+		private List<FloatingTextOverlay> _floatingTexts = [];
 
 		public GameplayScene(SceneManager manager, GameContext context)
 		{
@@ -47,6 +58,7 @@ namespace ErinWave.Pihagi.Scenes
 			{
 				if (collisionSystem.CheckCollision(player, bullet))
 				{
+					_shake.Start(0.3f, 8f);
 					_sceneManager.ChangeScene(new GameOverScene(_sceneManager, _context));
 					return;
 				}
@@ -68,19 +80,42 @@ namespace ErinWave.Pihagi.Scenes
 				{
 					bullet.IsActive = false;
 					_context.Score += 10;
+
+					_floatingTexts.Add(new FloatingTextOverlay("+10", bullet.Position, 1f)
+					{
+						RiseSpeed = 40f,
+						BaseColor = Color.Yellow,
+						Anchor = Anchor.Center
+					});
 				}
 			}
 
 			bullets.RemoveAll(b => !b.IsActive);
+
+			// Effects
+			_shake.Update(dt);
+
+			// Overlays
+			foreach (var ft in _floatingTexts)
+				ft.Update(dt);
+
+			_floatingTexts.RemoveAll(f => !f.IsAlive);
 		}
 
 		public void Render()
 		{
+			Raylib.BeginMode2D(new Camera2D(_shake.Offset, Vector2.Zero, 0, 1));
+
 			player.Render();
 			foreach (var bullet in bullets)
 				bullet.Render();
 
 			Raylib.DrawText($"{_context.Score}", 10, 10, 20, Color.White);
+
+			foreach (var ft in _floatingTexts)
+				ft.Render(18);
+
+			Raylib.EndMode2D();
 		}
 
 		private void Reset()
