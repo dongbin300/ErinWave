@@ -16,6 +16,8 @@ namespace ErinWave.Pihagi.Core
 		public CollisionSystem collisionSystem = new();
 		public SpawnSystem<Bullet> spawnSystem;
 
+		private int score = 0;
+
 		public Game()
 		{
 			spawnSystem = CreateSpawnSystem();
@@ -57,7 +59,10 @@ namespace ErinWave.Pihagi.Core
 				bullet.Update(delta);
 
 				if (bullet.Position.Y > Raylib.GetScreenHeight() + 10)
+				{
 					bullet.IsActive = false;
+					score += 10;
+				}
 			}
 			bullets.RemoveAll(b => !b.IsActive);
 		}
@@ -68,6 +73,8 @@ namespace ErinWave.Pihagi.Core
 
 			foreach (var bullet in bullets)
 				bullet.Render();
+
+			Raylib.DrawText($"{score}", 10, 10, 20, Color.LightGray);
 		}
 
 		private void GameOver()
@@ -79,6 +86,7 @@ namespace ErinWave.Pihagi.Core
 		{
 			bullets.Clear();
 			player = new Player();
+			score = 0;
 			spawnSystem = CreateSpawnSystem();
 		}
 
