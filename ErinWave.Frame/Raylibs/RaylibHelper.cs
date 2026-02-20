@@ -19,7 +19,7 @@ namespace ErinWave.Frame.Raylibs
 		#endregion
 
 		#region Text
-		public static void DrawTextAligned(string text, float x, float y, int fontSize, Color color, Anchor anchor = Anchor.TopLeft)
+		public static void DrawTextAnchored(string text, float x, float y, int fontSize, Color color, Anchor anchor = Anchor.TopLeft)
 		{
 			int w = Raylib.MeasureText(text, fontSize);
 			int h = fontSize;
@@ -39,7 +39,7 @@ namespace ErinWave.Frame.Raylibs
 			Raylib.DrawText(text, (int)x, (int)y, fontSize, color);
 		}
 
-		public static void DrawTextAligned(string text, float x, float y, Font font, int fontSize, float spacing, Color color, Anchor anchor = Anchor.TopLeft)
+		public static void DrawTextAnchored(string text, float x, float y, Font font, int fontSize, float spacing, Color color, Anchor anchor = Anchor.TopLeft)
 		{
 			Vector2 size = Raylib.MeasureTextEx(font, text, fontSize, spacing);
 			float w = size.X;
@@ -58,6 +58,23 @@ namespace ErinWave.Frame.Raylibs
 			}
 
 			Raylib.DrawTextEx(font, text, new Vector2(x, y), fontSize, spacing, color);
+		}
+
+		public static void DrawRectangleAnchored(float x, float y, float width, float height, Color color, Anchor anchor = Anchor.TopLeft)
+		{
+			switch (anchor)
+			{
+				case Anchor.TopCenter: x -= width / 2f; break;
+				case Anchor.TopRight: x -= width; break;
+				case Anchor.MiddleLeft: y -= height / 2f; break;
+				case Anchor.Center: x -= width / 2f; y -= height / 2f; break;
+				case Anchor.MiddleRight: x -= width; y -= height / 2f; break;
+				case Anchor.BottomLeft: y -= height; break;
+				case Anchor.BottomCenter: x -= width / 2f; y -= height; break;
+				case Anchor.BottomRight: x -= width; y -= height; break;
+			}
+
+			Raylib.DrawRectangle((int)x, (int)y, (int)width, (int)height, color);
 		}
 		#endregion
 	}

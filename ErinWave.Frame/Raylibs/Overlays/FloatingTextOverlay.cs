@@ -34,7 +34,7 @@ namespace ErinWave.Frame.Raylibs.Overlays
 
 			var color = new Color(BaseColor.R, BaseColor.G, BaseColor.B, (byte)(BaseColor.A * alpha));
 
-			RaylibHelper.DrawTextAligned(Text, Position.X, Position.Y, fontSize, color, Anchor);
+			RaylibHelper.DrawTextAnchored(Text, Position.X, Position.Y, fontSize, color, Anchor);
 		}
 	}
 }

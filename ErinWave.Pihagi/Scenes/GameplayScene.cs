@@ -2,6 +2,7 @@
 using ErinWave.Frame.Raylibs.Enums;
 using ErinWave.Frame.Raylibs.Overlays;
 using ErinWave.Frame.Raylibs.Scenes;
+using ErinWave.Frame.Raylibs.Stats;
 using ErinWave.Frame.Raylibs.Systems;
 using ErinWave.Pihagi.Core;
 using ErinWave.Pihagi.Entities;
@@ -56,11 +57,19 @@ namespace ErinWave.Pihagi.Scenes
 			// Collision
 			foreach (var bullet in bullets)
 			{
-				if (collisionSystem.CheckCollision(player, bullet))
+				if (collisionSystem.CheckCollision(player, bullet)) // Player hit
 				{
 					_shake.Start(0.3f, 8f);
-					_sceneManager.ChangeScene(new GameOverScene(_sceneManager, _context));
-					return;
+
+					var playerHp = player.Stats.Get(StatType.HP);
+					playerHp.Decrease(12);
+					bullet.IsActive = false;
+
+					if (playerHp.IsEmpty)
+					{
+						_sceneManager.ChangeScene(new GameOverScene(_sceneManager, _context));
+						return;
+					}
 				}
 			}
 
@@ -106,12 +115,25 @@ namespace ErinWave.Pihagi.Scenes
 		{
 			Raylib.BeginMode2D(new Camera2D(_shake.Offset, Vector2.Zero, 0, 1));
 
-			player.Render();
+			// Bullets
 			foreach (var bullet in bullets)
 				bullet.Render();
 
+			// UI
 			Raylib.DrawText($"{_context.Score}", 10, 10, 20, Color.White);
 
+			// Player
+			player.Render();
+			int width = (int)player.Size.X * 2;
+			int height = 6;
+			int x = (int)(player.Position.X - player.Size.X / 2);
+			int y = (int)player.Position.Y - 10;
+			var playerHp = player.Stats.Get(StatType.HP);
+			float ratio = playerHp.Ratio;
+			Raylib.DrawRectangle(x, y, width, height, Color.DarkGray);
+			Raylib.DrawRectangle(x, y, (int)(width * ratio), height, Color.Red);
+
+			// Overlays
 			foreach (var ft in _floatingTexts)
 				ft.Render(18);
 

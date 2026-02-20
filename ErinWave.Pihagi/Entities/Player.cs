@@ -1,12 +1,15 @@
 ﻿using ErinWave.Frame.Raylibs.Entities;
 using ErinWave.Frame.Raylibs.Physics;
+using ErinWave.Frame.Raylibs.Stats;
 
 using Raylib_cs;
 
 namespace ErinWave.Pihagi.Entities
 {
-	public class Player : RectangleEntity
+	public class Player : RectangleEntity, IHasStats
 	{
+		public StatContainer Stats { get; } = new();
+
 		public Player()
 		{
 			Color = Color.Magenta;
@@ -15,6 +18,8 @@ namespace ErinWave.Pihagi.Entities
 			Velocity = new(200, 0);
 
 			Collider = new RectangleCollider(this);
+
+			Stats.Add(StatType.HP, 100);
 		}
 	}
 }
