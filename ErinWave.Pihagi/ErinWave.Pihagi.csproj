@@ -1,14 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Audio\SFX\gameover.wav" />
+    <None Remove="Assets\Audio\SFX\heal.wav" />
+    <None Remove="Assets\Audio\SFX\hit.wav" />
+    <None Remove="Assets\Audio\SFX\start.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ErinWave.Frame\ErinWave.Frame.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Audio\BGM\" />
+    <Folder Include="Assets\Textures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Audio\SFX\gameover.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Audio\SFX\heal.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Audio\SFX\hit.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Audio\SFX\start.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

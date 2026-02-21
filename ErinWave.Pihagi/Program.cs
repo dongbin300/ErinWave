@@ -1,4 +1,5 @@
 ﻿using ErinWave.Frame.Raylibs;
+using ErinWave.Frame.Raylibs.Audio;
 using ErinWave.Frame.Raylibs.Scenes;
 using ErinWave.Pihagi.Core;
 using ErinWave.Pihagi.Scenes;
@@ -15,11 +16,16 @@ namespace ErinWave.Pihagi
 
 		static void Main(string[] args)
 		{
-			RaylibHelper.Init(250, 600, 240, "Pihagi", ConfigFlags.TransparentWindow | ConfigFlags.UndecoratedWindow);
+			RaylibHelper.Initialize(250, 600, 240, "Pihagi", ConfigFlags.TransparentWindow /*| ConfigFlags.UndecoratedWindow*/);
 			sceneTexture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
 			//string fontPath = @"C:\Users\Gaten\AppData\Local\Microsoft\Windows\Fonts\NanumBarunGothic.ttf";
 			//var font = KoreanFontHelper.LoadFont(fontPath, 16);
+
+			AudioManager.Load("start", "Assets/Audio/SFX/start.wav");
+			AudioManager.Load("gameover", "Assets/Audio/SFX/gameover.wav");
+			AudioManager.Load("medkit", "Assets/Audio/SFX/heal.wav");
+			AudioManager.Load("hit", "Assets/Audio/SFX/hit.wav");
 
 			var sceneManager = new SceneManager();
 			var context = new GameContext();
@@ -46,7 +52,7 @@ namespace ErinWave.Pihagi
 				Raylib.ClearBackground(Color.Blank);
 
 				// Global Transparency
-				var tint = new Color(255, 255, 255, 70);
+				var tint = new Color(255, 255, 255, 255);
 
 				Raylib.DrawTexturePro(
 					sceneTexture.Texture,
@@ -62,7 +68,7 @@ namespace ErinWave.Pihagi
 			}
 
 			//Raylib.UnloadFont(font);
-			Raylib.CloseWindow();
+			RaylibHelper.Dispose();
 		}
 	}
 }

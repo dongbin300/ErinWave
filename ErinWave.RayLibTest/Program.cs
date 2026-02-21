@@ -8,7 +8,7 @@ namespace ErinWave.RayLibTest
 	{
 		static void Main()
 		{
-			RaylibHelper.Init(250, 600, 240, "Pihagi", ConfigFlags.TransparentWindow | ConfigFlags.UndecoratedWindow);
+			RaylibHelper.Initialize(250, 600, 240, "Pihagi", ConfigFlags.TransparentWindow | ConfigFlags.UndecoratedWindow);
 
 			//string fontPath = @"C:\Users\Gaten\AppData\Local\Microsoft\Windows\Fonts\NanumBarunGothic.ttf";
 			//var font = KoreanFontHelper.LoadFont(fontPath, 16);

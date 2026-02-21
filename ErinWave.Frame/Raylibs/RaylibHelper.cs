@@ -1,4 +1,5 @@
 ﻿
+using ErinWave.Frame.Raylibs.Audio;
 using ErinWave.Frame.Raylibs.Enums;
 
 using Raylib_cs;
@@ -10,11 +11,20 @@ namespace ErinWave.Frame.Raylibs
 	public class RaylibHelper
 	{
 		#region Base
-		public static void Init(int screenWidth, int screenHeight, int fps, string title = "", ConfigFlags configFlags = ConfigFlags.ResizableWindow)
+		public static void Initialize(int screenWidth, int screenHeight, int fps, string title = "", ConfigFlags configFlags = ConfigFlags.ResizableWindow)
 		{
 			Raylib.SetConfigFlags(configFlags);
 			Raylib.InitWindow(screenWidth, screenHeight, title);
 			Raylib.SetTargetFPS(fps);
+
+			Raylib.InitAudioDevice();
+		}
+
+		public static void Dispose()
+		{
+			AudioManager.Dispose();
+			Raylib.CloseAudioDevice();
+			Raylib.CloseWindow();
 		}
 		#endregion
 

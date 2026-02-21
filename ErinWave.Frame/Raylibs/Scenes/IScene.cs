@@ -2,6 +2,7 @@
 {
 	public interface IScene
 	{
+		void Initialize();
 		void Enter();
 		void Exit();
 		void Update(float deltaTime);

@@ -7,15 +7,21 @@ using Raylib_cs;
 
 namespace ErinWave.Pihagi.Scenes
 {
-	public class GameOverScene(SceneManager manager, GameContext context) : IScene
+	public class GameOverScene(SceneManager manager, GameContext context) : SceneBase
 	{
-		public void Enter()
+		protected override void Initialize()
 		{
 		}
 
-		public void Exit() { }
+		protected override void OnEnter()
+		{
+		}
 
-		public void Update(float dt)
+		protected override void OnExit()
+		{
+		}
+
+		protected override void OnUpdate(float dt)
 		{
 			if (Raylib.IsKeyPressed(KeyboardKey.Enter))
 			{
@@ -23,7 +29,7 @@ namespace ErinWave.Pihagi.Scenes
 			}
 		}
 
-		public void Render()
+		protected override void OnRender()
 		{
 			int w = Raylib.GetScreenWidth();
 			int h = Raylib.GetScreenHeight();

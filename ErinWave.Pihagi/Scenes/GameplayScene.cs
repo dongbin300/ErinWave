@@ -1,4 +1,5 @@
-﻿using ErinWave.Frame.Raylibs.Effects;
+﻿using ErinWave.Frame.Raylibs.Audio;
+using ErinWave.Frame.Raylibs.Effects;
 using ErinWave.Frame.Raylibs.Enums;
 using ErinWave.Frame.Raylibs.Overlays;
 using ErinWave.Frame.Raylibs.Scenes;
@@ -13,10 +14,8 @@ using System.Numerics;
 
 namespace ErinWave.Pihagi.Scenes
 {
-	public class GameplayScene : IScene
+	public class GameplayScene(SceneManager manager, GameContext context) : SceneBase
 	{
-		private readonly SceneManager _sceneManager;
-		private readonly GameContext _context;
 
 		// Entities
 		private Player _player = new();
@@ -26,8 +25,8 @@ namespace ErinWave.Pihagi.Scenes
 		// Systems
 		private MovementSystem _movementSystem = new();
 		private CollisionSystem _collisionSystem = new();
-		private SpawnSystem<Bullet> _spawnSystem;
-		private SpawnSystem<MedkitItem> _medkitSpawnSystem;
+		private SpawnSystem<Bullet> _spawnSystem = default!;
+		private SpawnSystem<MedkitItem> _medkitSpawnSystem = default!;
 
 		// Effects
 		private CameraShake _shake = new();
@@ -35,23 +34,22 @@ namespace ErinWave.Pihagi.Scenes
 		// Overlays
 		private List<FloatingTextOverlay> _floatingTexts = [];
 
-		public GameplayScene(SceneManager manager, GameContext context)
+		protected override void Initialize()
 		{
-			_sceneManager = manager;
-			_context = context;
-
 			_spawnSystem = CreateSpawnSystem();
 			_medkitSpawnSystem = CreateMedkitSpawnSystem();
 		}
 
-		public void Enter()
+		protected override void OnEnter()
 		{
 			Reset();
 		}
 
-		public void Exit() { }
+		protected override void OnExit()
+		{
+		}
 
-		public void Update(float dt)
+		protected override void OnUpdate(float dt)
 		{
 			// Movement
 			_movementSystem.Update(_player, dt);
@@ -66,11 +64,13 @@ namespace ErinWave.Pihagi.Scenes
 
 					var playerHp = _player.Stats.Get(StatType.HP);
 					playerHp.Decrease(12);
+					AudioManager.Play("hit");
 					bullet.IsActive = false;
 
 					if (playerHp.IsEmpty)
 					{
-						_sceneManager.ChangeScene(new GameOverScene(_sceneManager, _context));
+						AudioManager.Play("gameover");
+						manager.ChangeScene(new GameOverScene(manager, context));
 						return;
 					}
 				}
@@ -83,6 +83,7 @@ namespace ErinWave.Pihagi.Scenes
 				{
 					var playerHp = _player.Stats.Get(StatType.HP);
 					playerHp.Increase(50);
+					AudioManager.Play("medkit");
 					medkit.IsActive = false;
 				}
 			}
@@ -106,7 +107,7 @@ namespace ErinWave.Pihagi.Scenes
 				if (bullet.Position.Y > Raylib.GetScreenHeight() + 10)
 				{
 					bullet.IsActive = false;
-					_context.Score += 10;
+					context.Score += 10;
 
 					_floatingTexts.Add(new FloatingTextOverlay("+10", bullet.Position, 1f)
 					{
@@ -132,7 +133,7 @@ namespace ErinWave.Pihagi.Scenes
 			_floatingTexts.RemoveAll(f => !f.IsAlive);
 		}
 
-		public void Render()
+		protected override void OnRender()
 		{
 			Raylib.BeginMode2D(new Camera2D(_shake.Offset, Vector2.Zero, 0, 1));
 
@@ -143,7 +144,7 @@ namespace ErinWave.Pihagi.Scenes
 				medkit.Render();
 
 			// UI
-			Raylib.DrawText($"{_context.Score}", 10, 10, 20, Color.White);
+			Raylib.DrawText($"{context.Score}", 10, 10, 20, Color.White);
 
 			// Player
 			_player.Render();
@@ -167,8 +168,9 @@ namespace ErinWave.Pihagi.Scenes
 		{
 			_bullets.Clear();
 			_player = new Player();
-			_context.Score = 0;
+			context.Score = 0;
 			_spawnSystem = CreateSpawnSystem();
+			AudioManager.Play("start");
 		}
 
 		private SpawnSystem<Bullet> CreateSpawnSystem()
